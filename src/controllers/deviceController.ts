@@ -16,9 +16,9 @@ export class DeviceController {
     this._devices = [...this._devices, newDevice];
     return newDevice.getDeviceId();
   }
-  //!
+
   public editDeviceName(token: number, idDevice: number, newValue: string): DeviceModel | void {
-    const referenceUserToken = this._tokenIstance.findReferenceByToken(token); //!
+    const referenceUserToken = this._tokenIstance.findReferenceByToken(token);
     if (!referenceUserToken) {
       console.log("Invalid Token");
       return;
