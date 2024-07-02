@@ -20,22 +20,19 @@ export class DeviceController {
   public editDeviceName(token: number, idDevice: number, newValue: string): DeviceModel | void {
     const referenceUserToken = this._tokenIstance.findReferenceByToken(token);
     if (!referenceUserToken) {
-      console.log("Invalid Token");
-      return;
+      throw new Error("Invalid Token");
     }
 
     const referenceUserDevice = this.getReferenceByIdDevice(idDevice);
     if (!referenceUserDevice) {
-      console.log("Invalid ID");
-      return;
+      throw new Error("Invalid ID");
     }
 
     const matchKey: boolean =
       referenceUserToken.getTokenReferenceKeyUser() === referenceUserDevice.getDeviceReferenceKeyUser();
 
     if (!matchKey) {
-      console.log("Not Match");
-      return;
+      throw new Error("User not found");
     }
 
     this._devices = this._devices.map((device) => {
@@ -48,7 +45,25 @@ export class DeviceController {
     });
   }
 
-  public removeDevice(token: number, idDevice: number) {}
+  public removeDevice(token: number, idDevice: number): void {
+    const referenceUserToken = this._tokenIstance.findReferenceByToken(token);
+    if (!referenceUserToken) {
+      throw new Error("Invalid Token");
+    }
+
+    const referenceUserDevice = this.getReferenceByIdDevice(idDevice);
+    if (!referenceUserDevice) {
+      throw new Error("Invalid ID");
+    }
+
+    const matchKey: boolean =
+      referenceUserToken.getTokenReferenceKeyUser() === referenceUserDevice.getDeviceReferenceKeyUser();
+    if (!matchKey) {
+      throw new Error("User not found");
+    }
+
+    this._devices = this._devices.filter((device) => device.getDeviceId() !== idDevice);
+  }
 
   public getReferenceByIdDevice(idDevice: number): DeviceModel | undefined {
     return this._devices.find((device) => device.getDeviceId() === idDevice);

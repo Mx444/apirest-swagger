@@ -1,4 +1,5 @@
 export class AdModel {
+  private _primaryKey: number;
   private _referenceKeyUser: number;
   private _title: string;
   private _description: string;
@@ -6,16 +7,17 @@ export class AdModel {
   private _price: number;
   private _status: string;
   private _category: string;
-  private _primaryKey: number;
   private _phone: string;
   private _lead: [];
   private _urlForImage: string;
   private _referenceKeyUserPurchased: number;
 
   constructor(
+    primaryKey: number,
     referenceKeyUser: number,
     title: string,
     description: string,
+    date: any,
     price: number,
     status: string,
     category: string,
@@ -23,14 +25,14 @@ export class AdModel {
     urlForImage: string,
     referenceKeyUserPurchased: number,
   ) {
+    this._primaryKey = primaryKey;
     this._referenceKeyUser = referenceKeyUser;
     this._title = title;
     this._description = description;
-    this._date = new Date();
+    this._date = date;
     this._price = price;
     this._status = status;
     this._category = category;
-    this._primaryKey = Math.floor(Math.random() * 1000);
     this._phone = phone;
     this._lead = [];
     this._urlForImage = urlForImage;

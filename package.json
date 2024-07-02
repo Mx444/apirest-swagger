@@ -1,0 +1,18 @@
+{
+  "scripts": {
+    "compile": "npx tsc --noEmit && tsc",
+    "tsnode": "npx ts-node src/app.ts"
+  },
+  "dependencies": {
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.3"
+  },
+  "name": "dubito.it",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

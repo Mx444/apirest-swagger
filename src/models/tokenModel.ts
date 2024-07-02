@@ -1,5 +1,7 @@
+import { UserModel } from "./userModel";
+
 export class TokenModel {
-  private _tokenReferenceKeyUser: number;
+  private _tokenReferenceKeyUser: UserModel["_primaryKey"];
   private _tokenUser: number;
 
   constructor(tokenReferenceKeyUser: number) {

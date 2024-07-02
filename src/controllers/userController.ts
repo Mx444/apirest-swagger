@@ -14,7 +14,7 @@ interface User {
 }
 
 export class UserController {
-  private _users: UserModel[];
+  private _users: Array<UserModel> = [];
   private _session: Session | null;
   private _tokenIstance: TokenController;
   private _deviceIstance: DeviceController;
@@ -26,10 +26,9 @@ export class UserController {
     this._deviceIstance = ServiceContainer.getDeviceController();
   }
 
-  public signup(email: string, username: string, password: string): void {
+  public signup(email: string, username: string, password: string): undefined {
     if (this._session) {
-      console.log("You are already logged in");
-      return;
+      throw new Error("You are already logged in");
     }
 
     const existingUser = this._users.find(
@@ -37,8 +36,7 @@ export class UserController {
     );
 
     if (existingUser) {
-      console.log("Email or Username already in use");
-      return;
+      throw new Error("Email or Username already in use");
     }
 
     const newUser = new UserModel(email, username, password);
@@ -46,10 +44,9 @@ export class UserController {
     console.log("User registered successfully");
   }
 
-  public login(username: string, password: string): User | null {
+  public login(username: string, password: string): User {
     if (this._session) {
-      console.log("You are already logged in");
-      return null;
+      throw new Error("You are already logged in");
     }
 
     const matchUserCredentials = this._users.find(
@@ -87,13 +84,11 @@ export class UserController {
 
   public logout(token: number): void {
     if (!this._session) {
-      console.log("You need to log in first");
-      return;
+      throw new Error("You need to log in first");
     }
     const userReference = this._tokenIstance.findReferenceByToken(token);
     if (!userReference) {
-      console.log("Invalid Token");
-      return;
+      throw new Error("Invalid Token");
     }
 
     const matchToken = this._tokenIstance.findTokenByReference(userReference.getTokenReferenceKeyUser());
@@ -102,7 +97,7 @@ export class UserController {
       this._tokenIstance.removeToken(matchToken);
       console.log("User logged out successfully");
     } else {
-      console.log("Invalid token");
+      throw new Error("Invalid token");
     }
   }
 
@@ -110,8 +105,7 @@ export class UserController {
     const userToken = this._tokenIstance.findReferenceByToken(token);
 
     if (!userToken) {
-      console.log("Invalid Token");
-      return;
+      throw new Error("Invalid Token");
     }
     this._users = this._users.map((user) => {
       if (user.getUserPrimaryKey() === userToken.getTokenReferenceKeyUser()) {
@@ -143,8 +137,7 @@ export class UserController {
   public removeUser(token: number, username: string, password: string): void {
     const userToken = this._tokenIstance.findReferenceByToken(token);
     if (!userToken) {
-      console.log("Invalid Token");
-      return;
+      throw new Error("Invalid Token");
     }
 
     const matchUserCredentials = this._users.find(
@@ -155,8 +148,7 @@ export class UserController {
     );
 
     if (!matchUserCredentials) {
-      console.log("User credentials do not match");
-      return;
+      throw new Error("User credentials do not match");
     }
 
     this._users = this._users.filter((user) => user.getUserPrimaryKey() !== userToken.getTokenReferenceKeyUser());

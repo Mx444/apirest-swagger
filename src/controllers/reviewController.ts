@@ -18,20 +18,17 @@ export class ReviewController {
   public addReview(token: number, refereceKeyAd: number, title: string, description: string, rating: any): number {
     const userToken = this._tokenIstance.findReferenceByToken(token);
     if (!userToken) {
-      console.log("Invalid Token!");
-      return -1;
+      throw new Error("Invalid Token!");
     }
 
     const findAd = this._adIstance.findAdByKey(refereceKeyAd);
     if (!findAd) {
-      console.log("Ad not found");
-      return -1;
+      throw new Error("Ad not found");
     }
 
     const matchUser: boolean = userToken.getTokenReferenceKeyUser() === findAd.getAdReferenceKeyUser();
     if (!matchUser) {
-      console.log("Invalid user");
-      return -1;
+      throw new Error("Invalid user");
     }
 
     const newReview = new ReviewModel(
@@ -50,20 +47,17 @@ export class ReviewController {
   public removeReview(token: number, primaryKeyReview: number): void {
     const userToken = this._tokenIstance.findReferenceByToken(token);
     if (!userToken) {
-      console.log("Invalid Token!");
-      return;
+      throw new Error("Invalid Token!");
     }
 
     const reviewKey = this.getReferenceByReview(primaryKeyReview);
     if (!reviewKey) {
-      console.log("Key not found!");
-      return;
+      throw new Error("Key not found!");
     }
 
     const matchUser: boolean = userToken.getTokenReferenceKeyUser() === reviewKey.getReviewReferenceKeyUser();
     if (!matchUser) {
-      console.log("Invalid User");
-      return;
+      throw new Error("Invalid User");
     }
 
     this._reviews = this._reviews.filter((review) => review.getReviewPrimaryKey() !== primaryKeyReview);
