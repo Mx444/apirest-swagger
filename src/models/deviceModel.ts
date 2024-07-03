@@ -1,27 +1,28 @@
+import { UserModel } from "./userModel";
 export class DeviceModel {
-  private _referenceKeyUser: number;
-  private _idDevice: number;
-  private _nameDevice: string;
+  private _userReferenceKey: UserModel["_primaryKey"];
+  private _deviceReferenceKey: number;
+  private _deviceName: string;
 
-  constructor(referenceKeyUser: number, nameDevice: string) {
-    this._referenceKeyUser = referenceKeyUser;
-    this._idDevice = Math.floor(Math.random() * 1000);
-    this._nameDevice = nameDevice;
+  constructor(userReferenceKey: UserModel["_primaryKey"], deviceName: string) {
+    this._userReferenceKey = userReferenceKey;
+    this._deviceReferenceKey = Math.floor(Math.random() * 1000);
+    this._deviceName = deviceName;
   }
 
-  public getDeviceReferenceKeyUser(): number {
-    return this._referenceKeyUser;
+  get userReferenceKey(): UserModel["_primaryKey"] {
+    return this._userReferenceKey;
   }
 
-  public getDeviceId(): number {
-    return this._idDevice;
+  get deviceReferenceKey(): number {
+    return this._deviceReferenceKey;
   }
 
-  public getDeviceName(): string {
-    return this._nameDevice;
+  get deviceName(): string {
+    return this._deviceName;
   }
 
-  public setDeviceName(newValue: string) {
-    this._nameDevice = newValue;
+  set deviceName(newValue: string) {
+    this._deviceName = newValue;
   }
 }

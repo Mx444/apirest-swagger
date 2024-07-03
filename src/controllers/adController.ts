@@ -3,7 +3,7 @@ import { TokenController } from "./tokenController";
 import { ServiceContainer } from "../services/servicesContainer";
 
 export class AdController {
-  private _ads: AdModel[];
+  private _ads: Array<AdModel> = [];
   private _tokenIstance: TokenController;
 
   constructor() {
@@ -18,155 +18,119 @@ export class AdController {
     price: number,
     status: string,
     category: string,
-    phone: string,
+    phone: number,
     urlForImage: string,
-    referenceKeyUserPurchased: number,
   ): number {
-    const referenceKeyUserByToken = this._tokenIstance.findReferenceByToken(token);
+    const userReference = this._tokenIstance.findReferenceByToken(token);
 
-    if (!referenceKeyUserByToken) {
-      throw new Error("Invalid Token");
-    }
-    const primaryKeyAd = Math.floor(Math.random() * 1000);
-    const currentDate = new Date();
-    const newAd = new AdModel(
-      primaryKeyAd,
-      referenceKeyUserByToken?.getTokenReferenceKeyUser()!,
+    const createAd = new AdModel(
+      userReference?.userPrimaryKey!,
       title,
       description,
-      currentDate,
       price,
       status,
       category,
       phone,
       urlForImage,
-      referenceKeyUserPurchased,
     );
+    this._ads = [...this._ads, createAd];
 
-    this._ads = [...this._ads, newAd];
-    return newAd.getAdPrimaryKey();
+    return createAd.primaryKey;
   }
 
-  public markAsSold(token: number, primaryKeyAd: number, referenceKeyUserPurchased: number): void | number {
-    const userToken = this._tokenIstance.findReferenceByToken(token);
-    if (!userToken) {
-      throw new Error("Invalid Token!");
-    }
+  public markAsSold(token: number, adPrimaryKey: number, userReferenceKeyPurchased: number): void {
+    const userReference = this._tokenIstance.findReferenceByToken(token);
+    const adReference = this.findAdByKey(adPrimaryKey);
 
-    const adKey = this._ads.find((key) => key.getAdPrimaryKey() === primaryKeyAd);
-    if (!adKey) {
-      throw new Error("Ad not Found");
-    }
-
-    const isUser: boolean = userToken.getTokenReferenceKeyUser() === adKey.getAdReferenceKeyUser();
-    if (isUser && !adKey.getAdReferenceKeyUserPurchased()) {
+    const isUserOwner: boolean = userReference!.userPrimaryKey === adReference!.userReferenceKey;
+    if (isUserOwner && !adReference!.userReferenceKeyPurchased) {
       this._ads = this._ads.map((ad) => {
-        if (ad.getAdPrimaryKey() === primaryKeyAd) {
-          const updatedAd = new AdModel(
-            adKey.getAdPrimaryKey(),
-            adKey.getAdReferenceKeyUser(),
-            adKey.getAdTitle(),
-            adKey.getAdDescription(),
-            adKey.getAdDate(),
-            adKey.getAdPrice(),
-            adKey.getAdStatus(),
-            adKey.getAdCategory(),
-            adKey.getAdPhone(),
-            adKey.getAdUrlForImage(),
-            referenceKeyUserPurchased,
-          );
-          return updatedAd;
+        if (ad.primaryKey === adPrimaryKey) {
+          ad.userReferenceKeyPurchased = userReferenceKeyPurchased;
+          return ad;
         }
         return ad;
       });
-      return adKey.getAdPrimaryKey();
     }
   }
 
-  public editAd(token: number, primaryKeyAd: number, type: string, newValue: any): void | number {
-    const referenceUser = this._tokenIstance.findReferenceByToken(token);
-    if (!referenceUser) {
-      throw new Error("Invalid Token");
-    }
-
-    const findAdAndMatchUser = this._ads.find(
-      (ad) =>
-        ad.getAdPrimaryKey() === primaryKeyAd &&
-        ad.getAdReferenceKeyUser() === referenceUser.getTokenReferenceKeyUser(),
-    );
-    if (!findAdAndMatchUser) {
-      throw new Error("Not Found");
+  public editAd(token: number, adPrimaryKey: number, type: string, newValue: any): void {
+    const userReference = this._tokenIstance.findReferenceByToken(token);
+    const adReference = this.findAdByKey(adPrimaryKey);
+    const isUserOwner: boolean = userReference?.userPrimaryKey === adReference?.userReferenceKey;
+    if (isUserOwner === false) {
+      throw new Error("Ad not found");
     }
 
     this._ads = this._ads.map((ad) => {
-      if (ad.getAdPrimaryKey() === primaryKeyAd) {
-        const updatedAd = new AdModel(
-          ad.getAdPrimaryKey(),
-          ad.getAdReferenceKeyUser(),
-          ad.getAdTitle(),
-          ad.getAdDescription(),
-          ad.getAdDate(),
-          ad.getAdPrice(),
-          ad.getAdStatus(),
-          ad.getAdCategory(),
-          ad.getAdPhone(),
-          ad.getAdUrlForImage(),
-          ad.getAdReferenceKeyUserPurchased(),
-        );
-
+      if (ad.primaryKey === adReference!.primaryKey) {
         switch (type) {
           case "title":
-            updatedAd.setAdTitle(newValue);
+            ad.title = newValue;
             break;
           case "description":
-            updatedAd.setAdDesciption(newValue);
+            ad.desciption = newValue;
             break;
           case "price":
-            updatedAd.setAdPrice(newValue);
+            ad.price = newValue;
             break;
           case "status":
-            updatedAd.setAdStatus(newValue);
+            ad.status = newValue;
             break;
           case "category":
-            updatedAd.setAdCategory(newValue);
+            ad.category = newValue;
             break;
           case "phone":
-            updatedAd.setAdPhone(newValue);
+            ad.phone = newValue;
             break;
           case "url":
-            updatedAd.setAdUrlForImage(newValue);
+            ad.urlForImage = newValue;
             break;
           default:
             console.log("Invalid edit type");
             return ad;
         }
-        return updatedAd;
       }
       return ad;
     });
-    console.log("Ad updated successfully");
-    return findAdAndMatchUser.getAdPrimaryKey();
   }
 
-  public deleteAd(token: number, primaryKeyAd: number): void {
-    const referenceUser = this._tokenIstance.findReferenceByToken(token);
-    if (!referenceUser) {
-      throw new Error("Invalid Token");
+  public deleteAd(token: number, adPrimaryKey: number): void {
+    const userReference = this._tokenIstance.findReferenceByToken(token);
+    const adReference = this.findAdByKey(adPrimaryKey);
+    const isUserOwner: boolean = userReference?.userPrimaryKey === adReference?.userReferenceKey;
+    if (isUserOwner === false) {
+      throw new Error("Ad not found");
     }
 
-    const findUser = this._ads.find((key) => key.getAdReferenceKeyUser() === referenceUser.getTokenReferenceKeyUser());
-    if (!findUser) {
-      throw new Error("User not found!");
+    this._ads = this._ads.filter((ad) => ad.primaryKey !== adReference!.primaryKey);
+  }
+
+  public filterAdByPrice(min: number, max: number) {
+    return this._ads.filter((ads) => ads.price >= min && ads.price <= max);
+  }
+
+  public filterAdByCategory(category: string) {
+    return this._ads.filter((ads) => ads.category === category);
+  }
+
+  public findAdByStatus(status: string) {
+    return this.ads.filter((ads) => ads.status === status);
+  }
+
+  public findAdBySold() {
+    return this._ads.filter((ads) => !ads.userReferenceKeyPurchased);
+  }
+
+  public findAdByKey(adPrimaryKey: number): AdModel | undefined {
+    const ad = this._ads.find((ad) => ad.primaryKey === adPrimaryKey);
+    if (!ad) {
+      throw new Error("Ad not found");
     }
-
-    this._ads = this._ads.filter((ad) => ad.getAdPrimaryKey() !== primaryKeyAd);
+    return ad;
   }
 
-  public findAdByKey(refereceKeyAd: number): AdModel | undefined {
-    return this._ads.find((ads) => ads.getAdPrimaryKey() === refereceKeyAd);
-  }
-
-  public getAds(): ReadonlyArray<AdModel> {
+  get ads(): ReadonlyArray<AdModel> {
     return [...this._ads];
   }
 }

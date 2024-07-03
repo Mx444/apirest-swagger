@@ -3,7 +3,7 @@ import { TokenController } from "./tokenController";
 import { ServiceContainer } from "../services/servicesContainer";
 
 export class DeviceController {
-  private _devices: DeviceModel[];
+  private _devices: Array<DeviceModel> = [];
   private _tokenIstance: TokenController;
 
   constructor() {
@@ -11,65 +11,48 @@ export class DeviceController {
     this._tokenIstance = ServiceContainer.getTokenController();
   }
 
-  public addNewDevice(referenceKeyUser: number, nameDevice: string): number {
-    const newDevice = new DeviceModel(referenceKeyUser, nameDevice);
-    this._devices = [...this._devices, newDevice];
-    return newDevice.getDeviceId();
+  public addDevice(userReferenceKey: number, deviceName: string): number {
+    const createDevice = new DeviceModel(userReferenceKey, deviceName);
+    this._devices = [...this._devices, createDevice];
+    return createDevice.deviceReferenceKey;
   }
 
-  public editDeviceName(token: number, idDevice: number, newValue: string): DeviceModel | void {
+  public editDeviceName(token: number, deviceReferenceKey: number, newValue: string): void {
     const referenceUserToken = this._tokenIstance.findReferenceByToken(token);
-    if (!referenceUserToken) {
-      throw new Error("Invalid Token");
-    }
-
-    const referenceUserDevice = this.getReferenceByIdDevice(idDevice);
-    if (!referenceUserDevice) {
-      throw new Error("Invalid ID");
-    }
-
-    const matchKey: boolean =
-      referenceUserToken.getTokenReferenceKeyUser() === referenceUserDevice.getDeviceReferenceKeyUser();
-
+    const referenceUserDevice = this.findReferenceByIdDevice(deviceReferenceKey);
+    const matchKey: boolean = referenceUserToken!.userPrimaryKey === referenceUserDevice!.userReferenceKey;
     if (!matchKey) {
       throw new Error("User not found");
     }
 
     this._devices = this._devices.map((device) => {
-      if (device.getDeviceId() === idDevice) {
-        device.setDeviceName(newValue);
-        return device;
-      } else {
+      if (device.deviceReferenceKey === deviceReferenceKey) {
+        device.deviceName = newValue;
         return device;
       }
+      return device;
     });
   }
 
-  public removeDevice(token: number, idDevice: number): void {
-    const referenceUserToken = this._tokenIstance.findReferenceByToken(token);
-    if (!referenceUserToken) {
-      throw new Error("Invalid Token");
-    }
-
-    const referenceUserDevice = this.getReferenceByIdDevice(idDevice);
-    if (!referenceUserDevice) {
-      throw new Error("Invalid ID");
-    }
-
-    const matchKey: boolean =
-      referenceUserToken.getTokenReferenceKeyUser() === referenceUserDevice.getDeviceReferenceKeyUser();
+  public removeDevice(token: number, deviceReferenceKey: number): void {
+    const referenceUser = this._tokenIstance.findReferenceByToken(token);
+    const referenceDevice = this.findReferenceByIdDevice(deviceReferenceKey);
+    const matchKey: boolean = referenceUser?.userPrimaryKey === referenceDevice?.userReferenceKey;
     if (!matchKey) {
       throw new Error("User not found");
     }
-
-    this._devices = this._devices.filter((device) => device.getDeviceId() !== idDevice);
+    this._devices = this._devices.filter((device) => device.deviceReferenceKey !== referenceDevice!.deviceReferenceKey);
   }
 
-  public getReferenceByIdDevice(idDevice: number): DeviceModel | undefined {
-    return this._devices.find((device) => device.getDeviceId() === idDevice);
+  public findReferenceByIdDevice(deviceReferenceKey: number): DeviceModel | undefined {
+    const findDevice = this._devices.find((device) => device.deviceReferenceKey === deviceReferenceKey);
+    if (!findDevice) {
+      throw new Error("Invalid Device Reference Key");
+    }
+    return findDevice;
   }
 
-  public getDevices(): ReadonlyArray<DeviceModel> {
+  get devices(): ReadonlyArray<DeviceModel> {
     return [...this._devices];
   }
 }

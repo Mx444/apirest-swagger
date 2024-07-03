@@ -1,19 +1,18 @@
 import { UserModel } from "./userModel";
-
 export class TokenModel {
-  private _tokenReferenceKeyUser: UserModel["_primaryKey"];
-  private _tokenUser: number;
+  private _userPrimaryKey: UserModel["_primaryKey"];
+  private _userToken: number;
 
-  constructor(tokenReferenceKeyUser: number) {
-    this._tokenReferenceKeyUser = tokenReferenceKeyUser;
-    this._tokenUser = Math.floor(Math.random() * 1000);
+  constructor(userPrimaryKey: UserModel["_primaryKey"]) {
+    this._userPrimaryKey = userPrimaryKey;
+    this._userToken = Math.floor(Math.random() * 1000);
   }
 
-  public getTokenReferenceKeyUser(): number {
-    return this._tokenReferenceKeyUser;
+  get userPrimaryKey(): UserModel["_primaryKey"] {
+    return this._userPrimaryKey;
   }
 
-  public getToken(): number {
-    return this._tokenUser;
+  get userToken(): number {
+    return this._userToken;
   }
 }

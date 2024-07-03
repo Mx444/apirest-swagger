@@ -2,10 +2,9 @@ import { ReviewModel } from "../models/reviewModel";
 import { TokenController } from "./tokenController";
 import { AdController } from "./adController";
 import { ServiceContainer } from "../services/servicesContainer";
-import { AdModel } from "../models/adModel";
 
 export class ReviewController {
-  private _reviews: ReviewModel[];
+  private _reviews: Array<ReviewModel> = [];
   private _tokenIstance: TokenController;
   private _adIstance: AdController;
 
@@ -15,55 +14,77 @@ export class ReviewController {
     this._adIstance = ServiceContainer.getAdController();
   }
 
-  public addReview(token: number, refereceKeyAd: number, title: string, description: string, rating: any): number {
-    const userToken = this._tokenIstance.findReferenceByToken(token);
-    if (!userToken) {
-      throw new Error("Invalid Token!");
-    }
+  public addReview(token: number, adRefereceKey: number, title: string, description: string, rating: any): number {
+    const userReference = this._tokenIstance.findReferenceByToken(token);
+    const adReference = this._adIstance.findAdByKey(adRefereceKey);
 
-    const findAd = this._adIstance.findAdByKey(refereceKeyAd);
-    if (!findAd) {
-      throw new Error("Ad not found");
-    }
-
-    const matchUser: boolean = userToken.getTokenReferenceKeyUser() === findAd.getAdReferenceKeyUser();
-    if (!matchUser) {
+    const isUserOwner: boolean = userReference!.userPrimaryKey === adReference!.userReferenceKey;
+    if (isUserOwner === false) {
       throw new Error("Invalid user");
     }
 
-    const newReview = new ReviewModel(
-      userToken.getTokenReferenceKeyUser(),
-      findAd.getAdPrimaryKey(),
+    const createReview = new ReviewModel(
+      userReference!.userPrimaryKey,
+      adReference!.primaryKey,
       title,
       description,
       rating,
     );
-    this._reviews = [...this._reviews, newReview];
-    return newReview.getReviewPrimaryKey();
+    this._reviews = [...this._reviews, createReview];
+    return createReview.primaryKey;
   }
-  //!
-  public editReview(token: number, primaryKeyReview: number, type: string, newValue: any) {}
 
-  public removeReview(token: number, primaryKeyReview: number): void {
-    const userToken = this._tokenIstance.findReferenceByToken(token);
-    if (!userToken) {
-      throw new Error("Invalid Token!");
-    }
+  public editReview(token: number, reviewPrimaryKey: number, type: string, newValue: any) {
+    const userReference = this._tokenIstance.findReferenceByToken(token);
+    const reviewReference = this.getReferenceByReview(reviewPrimaryKey);
 
-    const reviewKey = this.getReferenceByReview(primaryKeyReview);
-    if (!reviewKey) {
-      throw new Error("Key not found!");
-    }
-
-    const matchUser: boolean = userToken.getTokenReferenceKeyUser() === reviewKey.getReviewReferenceKeyUser();
-    if (!matchUser) {
+    const isUserOwner: boolean = userReference!.userPrimaryKey === reviewReference!.userReferenceKey;
+    if (isUserOwner === false) {
       throw new Error("Invalid User");
     }
 
-    this._reviews = this._reviews.filter((review) => review.getReviewPrimaryKey() !== primaryKeyReview);
+    this._reviews = this._reviews.map((review) => {
+      if (review.primaryKey === reviewReference!.primaryKey) {
+        switch (type) {
+          case "title":
+            review.title = newValue;
+            break;
+          case "description":
+            review.description = newValue;
+            break;
+          case "rating":
+            review.rating = newValue;
+            break;
+          default:
+            console.log("Invalid edit type");
+            return review;
+        }
+      }
+      return review;
+    });
   }
 
-  public getReferenceByReview(primaryKeyReview: number): ReviewModel | undefined {
-    return this._reviews.find((review) => review.getReviewPrimaryKey() === primaryKeyReview);
+  public removeReview(token: number, primaryKeyReview: number): void {
+    const userReference = this._tokenIstance.findReferenceByToken(token);
+    const reviewReference = this.getReferenceByReview(primaryKeyReview);
+
+    const isUserOwner: boolean = userReference!.userPrimaryKey === reviewReference!.userReferenceKey;
+    if (isUserOwner === false) {
+      throw new Error("Invalid User");
+    }
+
+    this._reviews = this._reviews.filter((review) => review.primaryKey !== reviewReference!.primaryKey);
+  }
+
+  public getReferenceByReview(reviewPrimaryKey: number): ReviewModel | undefined {
+    const review = this._reviews.find((review) => review.primaryKey === reviewPrimaryKey);
+    if (!review) {
+      throw new Error("Key not found!");
+    }
+    return review;
+  }
+
+  get review(): ReadonlyArray<ReviewModel> {
+    return [...this._reviews];
   }
 }

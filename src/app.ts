@@ -1,41 +1,48 @@
-import { ServiceContainer } from "./services/servicesContainer";
+// import { ServiceContainer } from "./services/servicesContainer";
 
-const userServices = ServiceContainer.getUserController();
-const tokenServices = ServiceContainer.getTokenController();
-const adsServices = ServiceContainer.getAdController();
-const deviceServices = ServiceContainer.getDeviceController();
+// const userServices = ServiceContainer.getUserController();
+// const tokenServices = ServiceContainer.getTokenController();
+// const adsServices = ServiceContainer.getAdController();
+// const deviceServices = ServiceContainer.getDeviceController();
+// const reviewServices = ServiceContainer.getReviewController();
+// const reportServices = ServiceContainer.getReportController();
+// const favoriteServices = ServiceContainer.getFavoriteController();
 
-//User
-userServices.signup("email", "username", "password");
-const user = userServices.login("username", "password");
-// userServices.editUser(user?.Token!, "username", "newMario");
-// console.log(userServices.getUsers());
-// console.log(tokenServices.getTokens());
-// userServices.logout(user?.Token!);
-// console.log(userServices.getSession());
-// console.log(userServices.getUsers());
-// userServices.removeUser(user?.Token!, "username", "password");
-// console.log(userServices.getUsers());
-
-//Token
-// console.log(tokenServices.getTokens());
-
-//Device
-// console.log(deviceServices.getDevices());
-// deviceServices.removeDevice(user?.Token!, user?.IdDevice!);
-// console.log(deviceServices.getDevices());
-
-//Ads
-
-const newAd = adsServices.createAd(user?.Token!, "titolo", "descrizione", 10, "status", "null", "phone", "url", 0);
-console.log(adsServices.getAds());
-const adSold = adsServices.markAsSold(user?.Token!, newAd!, 123);
-
-console.log(adsServices.getAds());
-const edit = adsServices.editAd(user?.Token!, newAd!, "title", "newTitle");
-adsServices.editAd(user?.Token!, newAd!, "description", "newDescription");
-console.log(adsServices.getAds());
-console.log(newAd);
-console.log(adSold);
-
-//check costruttori primarykey func
+// userServices.signup("mariorossi@gmail.com", "mariorossi", "password");
+// userServices.signup("luciaverdi@gmail.com", "luciaverdi", "password");
+// userServices.signup("giovanni@gmail.com", "giovanni", "password");
+// userServices.signup("luca@gmail.com", "luca", "password");
+// console.log(userServices.users);
+// const user = userServices.login("luciaverdi", "password");
+// console.log(userServices.users);
+// console.log(userServices.session);
+// console.log(tokenServices.tokens);
+// userServices.logout(user.userToken);
+// console.log(userServices.users);
+// console.log(userServices.session);
+// console.log(tokenServices.tokens);
+// userServices.editUser(user.userToken, "username", "newLucia");
+// userServices.removeUser(user.userToken, "newLucia", "password");
+// console.log(userServices.users);
+// console.log(userServices.session);
+// console.log(tokenServices.tokens);
+// console.log(deviceServices.devices);
+// console.log(deviceServices.devices);
+// const newAd = adsServices.createAd(user.userToken, "title", "description", 10, "good", "tech", 123456789, "url");
+// const newAd1 = adsServices.createAd(user.userToken, "title", "description", 10, "good", "tech", 123456789, "url");
+// favoriteServices.createFavorite(user.userToken, newAd);
+// const fav = favoriteServices.createFavorite(user.userToken, newAd1);
+// favoriteServices.removeFavorite(user.userToken, fav!);
+// console.log(favoriteServices.favorites);
+// const newReport = reportServices.createReport(user.userToken, newAd, "reportTitle", "reportDescription");
+// reportServices.closeReport(user.userToken, newReport);
+// console.log(reportServices.reports);
+// adsServices.markAsSold(user.userToken, newAd, 999);
+// console.log(adsServices.findAdBySold());
+// adsServices.editAd(user.userToken, newAd, "title", "newTitle");
+// adsServices.editAd(user.userToken, newAd, "description", "newDescription");
+// const review = reviewServices.addReview(user.userToken, newAd, "review", "reviewDescription", 5);
+// console.log(adsServices.ads);
+// reviewServices.editReview(user.userToken, review, "title", "newTitle");
+// reviewServices.removeReview(user.userToken, review);
+// console.log(reviewServices.review);

@@ -2,15 +2,15 @@ import { UserModel } from "../models/userModel";
 import { DeviceController } from "./deviceController";
 import { TokenController } from "./tokenController";
 import { ServiceContainer } from "../services/servicesContainer";
+import { TokenModel } from "../models/tokenModel";
 
 interface Session {
-  userID: number;
-  Username: string;
+  username: UserModel["_username"];
+  userPrimaryKey: UserModel["_primaryKey"];
 }
 
-interface User {
-  Token: number;
-  IdDevice: number;
+interface Token {
+  userToken: TokenModel["_userToken"];
 }
 
 export class UserController {
@@ -26,142 +26,106 @@ export class UserController {
     this._deviceIstance = ServiceContainer.getDeviceController();
   }
 
-  public signup(email: string, username: string, password: string): undefined {
-    if (this._session) {
-      throw new Error("You are already logged in");
-    }
-
-    const existingUser = this._users.find(
-      (user) => user.getUserEmail() === email || user.getUserUsername() === username,
-    );
-
-    if (existingUser) {
+  public signup(email: string, username: string, password: string): void {
+    this.checkNotLoggedIn();
+    const existingCredentials = this._users.find((user) => user.email === email || user.username === username);
+    if (existingCredentials) {
       throw new Error("Email or Username already in use");
     }
-
-    const newUser = new UserModel(email, username, password);
-    this._users = [...this._users, newUser];
-    console.log("User registered successfully");
+    const createUser = new UserModel(email, username, password);
+    this._users = [...this._users, createUser];
   }
 
-  public login(username: string, password: string): User {
-    if (this._session) {
-      throw new Error("You are already logged in");
-    }
-
-    const matchUserCredentials = this._users.find(
-      (user) => user.getUserUsername() === username && user.getUserPassword() === password,
-    );
-
-    if (!matchUserCredentials) {
+  public login(username: string, password: string): Token {
+    this.checkNotLoggedIn();
+    const user = this._users.find((user) => user.username === username && user.password === password);
+    if (!user) {
       throw new Error("Invalid credentials");
     }
-
     this._session = {
-      userID: matchUserCredentials.getUserPrimaryKey(),
-      Username: matchUserCredentials.getUserUsername(),
+      username: user.username,
+      userPrimaryKey: user.primaryKey,
     };
-
-    const devices = this._deviceIstance.getDevices();
-    const userDevices = devices.filter(
-      (device) => device.getDeviceReferenceKeyUser() === matchUserCredentials.getUserPrimaryKey(),
-    );
-    if (userDevices.length >= 2) {
+    const devices = this._deviceIstance.devices;
+    const deviceLimit = devices.filter((device) => device.userReferenceKey === user.primaryKey);
+    if (deviceLimit.length >= 2) {
       throw new Error("User has more than or equal to 2 devices");
     }
-    const newDevice = this._deviceIstance.addNewDevice(matchUserCredentials.getUserPrimaryKey(), "");
-
-    const userToken = this._tokenIstance.findTokenByReference(matchUserCredentials.getUserPrimaryKey());
-    if (!userToken) {
-      const newToken = this._tokenIstance.generateAndStoreToken(matchUserCredentials.getUserPrimaryKey());
-      console.log(`New Token: ${newToken}`);
-      return { Token: newToken, IdDevice: newDevice };
+    this._deviceIstance.addDevice(user.primaryKey, "default");
+    const findUserToken = this._tokenIstance.findTokenByReference(user.primaryKey);
+    if (!findUserToken) {
+      const createToken = this._tokenIstance.generateAndStoreToken(user.primaryKey);
+      return { userToken: createToken };
     }
-
-    console.log(`Active Token: ${userToken.getToken()}`);
-    return { Token: userToken.getToken(), IdDevice: newDevice };
+    return { userToken: findUserToken.userToken };
   }
 
   public logout(token: number): void {
-    if (!this._session) {
-      throw new Error("You need to log in first");
-    }
+    this.checkLoggedIn();
     const userReference = this._tokenIstance.findReferenceByToken(token);
-    if (!userReference) {
-      throw new Error("Invalid Token");
-    }
-
-    const matchToken = this._tokenIstance.findTokenByReference(userReference.getTokenReferenceKeyUser());
-    if (matchToken) {
-      this._session = null;
-      this._tokenIstance.removeToken(matchToken);
-      console.log("User logged out successfully");
-    } else {
-      throw new Error("Invalid token");
-    }
+    this._session = null;
+    this._tokenIstance.removeToken(userReference!);
   }
 
   public editUser(token: number, type: string, newValue: string): void {
-    const userToken = this._tokenIstance.findReferenceByToken(token);
+    this.checkLoggedIn();
+    const userReference = this._tokenIstance.findReferenceByToken(token);
 
-    if (!userToken) {
-      throw new Error("Invalid Token");
-    }
     this._users = this._users.map((user) => {
-      if (user.getUserPrimaryKey() === userToken.getTokenReferenceKeyUser()) {
-        const updatedUser = new UserModel(user.getUserEmail(), user.getUserUsername(), user.getUserPassword());
-        updatedUser.setUserPrimaryKey(user.getUserPrimaryKey());
-
+      if (user.primaryKey === userReference!.userPrimaryKey) {
         switch (type) {
           case "email":
-            updatedUser.setUserEmail(newValue);
+            user.email = newValue;
             break;
           case "username":
-            updatedUser.setUserUsername(newValue);
+            user.username = newValue;
             break;
           case "password":
-            updatedUser.setUserPassword(newValue);
+            user.password = newValue;
             break;
           default:
             console.log("Invalid edit type");
             return user;
         }
-        return updatedUser;
       }
       return user;
     });
-
-    console.log("User updated successfully");
   }
 
   public removeUser(token: number, username: string, password: string): void {
-    const userToken = this._tokenIstance.findReferenceByToken(token);
-    if (!userToken) {
-      throw new Error("Invalid Token");
-    }
+    this.checkLoggedIn();
+    const userReference = this._tokenIstance.findReferenceByToken(token);
 
-    const matchUserCredentials = this._users.find(
+    const matchCredentials = this._users.find(
       (user) =>
-        user.getUserUsername() === username &&
-        user.getUserPassword() === password &&
-        user.getUserPrimaryKey() === userToken.getTokenReferenceKeyUser(),
+        user.username === username && user.password === password && user.primaryKey === userReference?.userPrimaryKey,
     );
-
-    if (!matchUserCredentials) {
+    if (!matchCredentials) {
       throw new Error("User credentials do not match");
     }
 
-    this._users = this._users.filter((user) => user.getUserPrimaryKey() !== userToken.getTokenReferenceKeyUser());
+    this._users = this._users.filter((user) => user.primaryKey !== userReference?.userPrimaryKey);
     this._session = null;
-    this._tokenIstance.removeToken(userToken);
-    console.log("User removed successfully");
+    this._tokenIstance.removeToken(userReference!);
   }
 
-  public getUsers(): ReadonlyArray<UserModel> {
+  get users(): ReadonlyArray<UserModel> {
     return [...this._users];
   }
 
-  public getSession(): Session | null {
+  get session(): Session | null {
     return this._session;
+  }
+
+  private checkNotLoggedIn(): void {
+    if (this._session) {
+      throw new Error("Already logged in");
+    }
+  }
+
+  private checkLoggedIn(): void {
+    if (!this._session) {
+      throw new Error("Not logged in");
+    }
   }
 }

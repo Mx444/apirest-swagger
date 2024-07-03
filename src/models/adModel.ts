@@ -1,115 +1,116 @@
+import { UserModel } from "./userModel";
 export class AdModel {
   private _primaryKey: number;
-  private _referenceKeyUser: number;
+  private _userReferenceKey: UserModel["_primaryKey"];
   private _title: string;
   private _description: string;
-  private _date: any;
+  private _date: Date;
   private _price: number;
   private _status: string;
   private _category: string;
-  private _phone: string;
+  private _phone: number;
   private _lead: [];
   private _urlForImage: string;
-  private _referenceKeyUserPurchased: number;
+  private _userReferenceKeyPurchased: number;
 
   constructor(
-    primaryKey: number,
-    referenceKeyUser: number,
+    userReferenceKey: UserModel["_primaryKey"],
     title: string,
     description: string,
-    date: any,
     price: number,
     status: string,
     category: string,
-    phone: string,
+    phone: number,
     urlForImage: string,
-    referenceKeyUserPurchased: number,
   ) {
-    this._primaryKey = primaryKey;
-    this._referenceKeyUser = referenceKeyUser;
+    this._primaryKey = Math.floor(Math.random() * 1000);
+    this._userReferenceKey = userReferenceKey;
     this._title = title;
     this._description = description;
-    this._date = date;
+    this._date = new Date();
     this._price = price;
     this._status = status;
     this._category = category;
     this._phone = phone;
     this._lead = [];
     this._urlForImage = urlForImage;
-    this._referenceKeyUserPurchased = referenceKeyUserPurchased;
+    this._userReferenceKeyPurchased = 0;
   }
 
-  public getAdReferenceKeyUser(): number {
-    return this._referenceKeyUser;
+  get userReferenceKey(): UserModel["_primaryKey"] {
+    return this._userReferenceKey;
   }
 
-  public getAdTitle(): string {
+  get title(): string {
     return this._title;
   }
 
-  public setAdTitle(newValue: string) {
+  set title(newValue: string) {
     this._title = newValue;
   }
 
-  public getAdDescription(): string {
+  get description(): string {
     return this._description;
   }
 
-  public setAdDesciption(newValue: string) {
+  set desciption(newValue: string) {
     this._description = newValue;
   }
 
-  public getAdDate(): any {
+  get date(): any {
     return this._date;
   }
 
-  public getAdPrice(): number {
+  get price(): number {
     return this._price;
   }
 
-  public setAdPrice(newValue: number) {
+  set price(newValue: number) {
     this._price = newValue;
   }
-  public getAdStatus(): string {
+  get status(): string {
     return this._status;
   }
 
-  public setAdStatus(newValue: string) {
+  set status(newValue: string) {
     this._status = newValue;
   }
 
-  public getAdCategory(): string {
+  get category(): string {
     return this._category;
   }
 
-  public setAdCategory(newValue: string) {
+  set category(newValue: string) {
     this._category = newValue;
   }
 
-  public getAdPrimaryKey(): number {
+  get primaryKey(): number {
     return this._primaryKey;
   }
 
-  public getAdPhone(): string {
+  get phone(): number {
     return this._phone;
   }
 
-  public setAdPhone(newValue: string) {
+  set phone(newValue: number) {
     this._phone = newValue;
   }
-  public getAdLead(): [] {
+  get lead(): [] {
     return this._lead;
   }
 
-  public getAdUrlForImage(): string {
+  get urlForImage(): string {
     return this._urlForImage;
   }
 
-  public setAdUrlForImage(newValue: string) {
+  set urlForImage(newValue: string) {
     this._urlForImage = newValue;
   }
 
-  public getAdReferenceKeyUserPurchased(): number {
-    return this._referenceKeyUserPurchased;
+  get userReferenceKeyPurchased(): number {
+    return this._userReferenceKeyPurchased;
+  }
+  set userReferenceKeyPurchased(newValue: number) {
+    this._userReferenceKeyPurchased = newValue;
   }
 }

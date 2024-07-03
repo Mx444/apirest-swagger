@@ -11,31 +11,35 @@ export class UserModel {
     this._password = password;
   }
 
-  public getUserPrimaryKey(): number {
+  get primaryKey(): number {
     return this._primaryKey;
   }
-  public setUserPrimaryKey(newValue: number) {
+
+  set primaryKey(newValue: number) {
     this._primaryKey = newValue;
   }
 
-  public getUserEmail(): string {
+  get email(): string {
     return this._email;
   }
-  public setUserEmail(newValue: string) {
+
+  set email(newValue: string) {
     this._email = newValue;
   }
 
-  public getUserUsername(): string {
+  get username(): string {
     return this._username;
   }
-  public setUserUsername(newValue: string) {
+
+  set username(newValue: string) {
     this._username = newValue;
   }
 
-  public getUserPassword(): string {
+  get password(): string {
     return this._password;
   }
-  public setUserPassword(newValue: string) {
+
+  set password(newValue: string) {
     this._password = newValue;
   }
 }
