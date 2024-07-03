@@ -1,6 +1,6 @@
-import { DeviceModel } from "../models/deviceModel";
-import { TokenController } from "./tokenController";
-import { ServiceContainer } from "../services/servicesContainer";
+import { DeviceModel } from "../models/Device";
+import { TokenController } from "./Tokens";
+import { ServiceContainer } from "../services/ServicesContainer";
 
 export class DeviceController {
   private _devices: Array<DeviceModel> = [];

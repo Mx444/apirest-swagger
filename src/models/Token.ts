@@ -1,4 +1,4 @@
-import { UserModel } from "./userModel";
+import { UserModel } from "./User";
 export class TokenModel {
   private _userPrimaryKey: UserModel["_primaryKey"];
   private _userToken: number;

@@ -1,6 +1,6 @@
-import { AdModel } from "../models/adModel";
-import { TokenController } from "./tokenController";
-import { ServiceContainer } from "../services/servicesContainer";
+import { AdModel } from "../models/Ad";
+import { TokenController } from "./Tokens";
+import { ServiceContainer } from "../services/ServicesContainer";
 
 export class AdController {
   private _ads: Array<AdModel> = [];

@@ -1,7 +1,7 @@
-import { FavoriteModel } from "../models/favoriteModel";
-import { ServiceContainer } from "../services/servicesContainer";
-import { AdController } from "./adController";
-import { TokenController } from "./tokenController";
+import { FavoriteModel } from "../models/Favorite";
+import { ServiceContainer } from "../services/ServicesContainer";
+import { AdController } from "./Ads";
+import { TokenController } from "./Tokens";
 
 export class FavoriteController {
   private _favorites: Array<FavoriteModel> = [];

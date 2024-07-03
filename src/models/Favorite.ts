@@ -1,5 +1,5 @@
-import { UserModel } from "./userModel";
-import { AdModel } from "./adModel";
+import { UserModel } from "./User";
+import { AdModel } from "./Ad";
 
 export class FavoriteModel {
   private _primaryKey: number;

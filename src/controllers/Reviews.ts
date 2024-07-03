@@ -1,7 +1,7 @@
-import { ReviewModel } from "../models/reviewModel";
-import { TokenController } from "./tokenController";
-import { AdController } from "./adController";
-import { ServiceContainer } from "../services/servicesContainer";
+import { ReviewModel } from "../models/Review";
+import { TokenController } from "./Tokens";
+import { AdController } from "./Ads";
+import { ServiceContainer } from "../services/ServicesContainer";
 
 export class ReviewController {
   private _reviews: Array<ReviewModel> = [];

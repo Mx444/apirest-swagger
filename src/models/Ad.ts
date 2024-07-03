@@ -1,4 +1,4 @@
-import { UserModel } from "./userModel";
+import { UserModel } from "./User";
 export class AdModel {
   private _primaryKey: number;
   private _userReferenceKey: UserModel["_primaryKey"];

@@ -1,4 +1,4 @@
-import { TokenModel } from "../models/tokenModel";
+import { TokenModel } from "../models/Token";
 
 export class TokenController {
   private _tokens: Array<TokenModel> = [];

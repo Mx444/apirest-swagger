@@ -1,10 +1,10 @@
-import { UserController } from "../controllers/userController";
-import { DeviceController } from "../controllers/deviceController";
-import { TokenController } from "../controllers/tokenController";
-import { AdController } from "../controllers/adController";
-import { ReviewController } from "../controllers/reviewController";
-import { ReportController } from "../controllers/reportController";
-import { FavoriteController } from "../controllers/favoriteController";
+import { UserController } from "../controllers/Users";
+import { DeviceController } from "../controllers/Devices";
+import { TokenController } from "../controllers/Tokens";
+import { AdController } from "../controllers/Ads";
+import { ReviewController } from "../controllers/Reviews";
+import { ReportController } from "../controllers/Reports";
+import { FavoriteController } from "../controllers/Favorites";
 export class ServiceContainer {
   private static _tokenController: TokenController = new TokenController();
   private static _deviceController: DeviceController = new DeviceController();

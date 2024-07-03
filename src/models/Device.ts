@@ -1,4 +1,4 @@
-import { UserModel } from "./userModel";
+import { UserModel } from "./User";
 export class DeviceModel {
   private _userReferenceKey: UserModel["_primaryKey"];
   private _deviceReferenceKey: number;

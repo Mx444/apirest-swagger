@@ -1,8 +1,8 @@
-import { UserModel } from "../models/userModel";
-import { DeviceController } from "./deviceController";
-import { TokenController } from "./tokenController";
-import { ServiceContainer } from "../services/servicesContainer";
-import { TokenModel } from "../models/tokenModel";
+import { UserModel } from "../models/User";
+import { DeviceController } from "./Devices";
+import { TokenController } from "./Tokens";
+import { ServiceContainer } from "../services/ServicesContainer";
+import { TokenModel } from "../models/Token";
 
 interface Session {
   username: UserModel["_username"];

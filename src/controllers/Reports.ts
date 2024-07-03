@@ -1,7 +1,7 @@
-import { ReportModel } from "../models/reportModel";
-import { TokenController } from "./tokenController";
-import { AdController } from "./adController";
-import { ServiceContainer } from "../services/servicesContainer";
+import { ReportModel } from "../models/Report";
+import { TokenController } from "./Tokens";
+import { AdController } from "./Ads";
+import { ServiceContainer } from "../services/ServicesContainer";
 
 export class ReportController {
   private _reports: Array<ReportModel> = [];
