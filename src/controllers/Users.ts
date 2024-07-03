@@ -3,6 +3,7 @@ import { DeviceController } from "./Devices";
 import { TokenController } from "./Tokens";
 import { ServiceContainer } from "../services/ServicesContainer";
 import { TokenModel } from "../models/Token";
+import { DeviceModel } from "../models/Device";
 
 interface Session {
   username: UserModel["_username"];
@@ -11,6 +12,7 @@ interface Session {
 
 interface Token {
   userToken: TokenModel["_userToken"];
+  deviceReferenceKey: DeviceModel["_deviceReferenceKey"];
 }
 
 export class UserController {
@@ -51,23 +53,23 @@ export class UserController {
     if (deviceLimit.length >= 2) {
       throw new Error("User has more than or equal to 2 devices");
     }
-    this._deviceIstance.addDevice(user.primaryKey, "default");
+    const createDevice = this._deviceIstance.addDevice(user.primaryKey, "default");
     const findUserToken = this._tokenIstance.findTokenByReference(user.primaryKey);
     if (!findUserToken) {
       const createToken = this._tokenIstance.generateAndStoreToken(user.primaryKey);
-      return { userToken: createToken };
+      return { userToken: createToken, deviceReferenceKey: createDevice };
     }
-    return { userToken: findUserToken.userToken };
+    return { userToken: findUserToken.userToken, deviceReferenceKey: createDevice };
   }
 
-  public logout(token: number): void {
+  public logout(token: TokenModel["_userToken"]): void {
     this.checkLoggedIn();
     const userReference = this._tokenIstance.findReferenceByToken(token);
     this._session = null;
     this._tokenIstance.removeToken(userReference!);
   }
 
-  public editUser(token: number, type: string, newValue: string): void {
+  public editUser(token: TokenModel["_userToken"], type: string, newValue: string): void {
     this.checkLoggedIn();
     const userReference = this._tokenIstance.findReferenceByToken(token);
 
@@ -92,7 +94,7 @@ export class UserController {
     });
   }
 
-  public removeUser(token: number, username: string, password: string): void {
+  public removeUser(token: TokenModel["_userToken"], username: string, password: string): void {
     this.checkLoggedIn();
     const userReference = this._tokenIstance.findReferenceByToken(token);
 

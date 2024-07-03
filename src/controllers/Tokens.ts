@@ -1,4 +1,5 @@
 import { TokenModel } from "../models/Token";
+import { UserModel } from "../models/User";
 
 export class TokenController {
   private _tokens: Array<TokenModel> = [];
@@ -7,7 +8,7 @@ export class TokenController {
     this._tokens = [];
   }
 
-  public generateAndStoreToken(userReferenceKey: number): number {
+  public generateAndStoreToken(userReferenceKey: UserModel["_primaryKey"]): number {
     const createToken = new TokenModel(userReferenceKey);
     this._tokens = [...this._tokens, createToken];
     return createToken.userToken;

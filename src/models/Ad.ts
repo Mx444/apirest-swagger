@@ -11,7 +11,7 @@ export class AdModel {
   private _phone: number;
   private _lead: [];
   private _urlForImage: string;
-  private _userReferenceKeyPurchased: number;
+  private _userReferenceKeyPurchased: UserModel["_primaryKey"];
 
   constructor(
     userReferenceKey: UserModel["_primaryKey"],
