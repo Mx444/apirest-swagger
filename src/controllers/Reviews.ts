@@ -4,7 +4,7 @@ import { AdController } from "./Ads";
 import { ServiceContainer } from "../services/ServicesContainer";
 
 export class ReviewController {
-  private _reviews: Array<ReviewModel> = [];
+  private _reviews: ReadonlyArray<Readonly<ReviewModel>>;
   private _tokenIstance: TokenController;
   private _adIstance: AdController;
 
@@ -47,14 +47,11 @@ export class ReviewController {
       if (review.primaryKey === reviewReference!.primaryKey) {
         switch (type) {
           case "title":
-            review.title = newValue;
-            break;
+            return { ...review, _title: newValue };
           case "description":
-            review.description = newValue;
-            break;
+            return { ...review, _description: newValue };
           case "rating":
-            review.rating = newValue;
-            break;
+            return { ...review, _rating: newValue };
           default:
             console.log("Invalid edit type");
             return review;
@@ -76,7 +73,7 @@ export class ReviewController {
     this._reviews = this._reviews.filter((review) => review.primaryKey !== reviewReference!.primaryKey);
   }
 
-  public getReferenceByReview(reviewPrimaryKey: number): ReviewModel | undefined {
+  public getReferenceByReview(reviewPrimaryKey: number) {
     const review = this._reviews.find((review) => review.primaryKey === reviewPrimaryKey);
     if (!review) {
       throw new Error("Key not found!");
@@ -84,7 +81,7 @@ export class ReviewController {
     return review;
   }
 
-  get review(): ReadonlyArray<ReviewModel> {
+  get review() {
     return [...this._reviews];
   }
 }

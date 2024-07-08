@@ -16,7 +16,7 @@ interface Token {
 }
 
 export class UserController {
-  private _users: Array<UserModel> = [];
+  private _users: ReadonlyArray<Readonly<UserModel>>;
   private _session: Session | null;
   private _tokenIstance: TokenController;
   private _deviceIstance: DeviceController;
@@ -66,10 +66,10 @@ export class UserController {
     this.checkLoggedIn();
     const userReference = this._tokenIstance.findReferenceByToken(token);
     this._session = null;
-    this._tokenIstance.removeToken(userReference!);
+    this._tokenIstance.removeToken(userReference.userToken);
   }
 
-  public editUser(token: TokenModel["_userToken"], type: string, newValue: string): void {
+  public editUser(token: TokenModel["_userToken"], type: string, newValue: string) {
     this.checkLoggedIn();
     const userReference = this._tokenIstance.findReferenceByToken(token);
 
@@ -77,13 +77,13 @@ export class UserController {
       if (user.primaryKey === userReference!.userPrimaryKey) {
         switch (type) {
           case "email":
-            user.email = newValue;
+            return { ...user, _email: newValue };
             break;
           case "username":
-            user.username = newValue;
+            return { ...user, _username: newValue };
             break;
           case "password":
-            user.password = newValue;
+            return { ...user, _password: newValue };
             break;
           default:
             console.log("Invalid edit type");
@@ -108,10 +108,10 @@ export class UserController {
 
     this._users = this._users.filter((user) => user.primaryKey !== userReference?.userPrimaryKey);
     this._session = null;
-    this._tokenIstance.removeToken(userReference!);
+    this._tokenIstance.removeToken(userReference.userToken);
   }
 
-  get users(): ReadonlyArray<UserModel> {
+  get users() {
     return [...this._users];
   }
 

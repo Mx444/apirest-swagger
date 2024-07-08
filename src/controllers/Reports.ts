@@ -4,7 +4,7 @@ import { AdController } from "./Ads";
 import { ServiceContainer } from "../services/ServicesContainer";
 
 export class ReportController {
-  private _reports: Array<ReportModel> = [];
+  private _reports: ReadonlyArray<Readonly<ReportModel>> = [];
   private _tokenIstance: TokenController;
   private _adIstance: AdController;
 
@@ -36,13 +36,13 @@ export class ReportController {
 
     this._reports = this._reports.map((report) => {
       if (report.primaryKey === reportReference!.primaryKey) {
-        report.closed = true;
+        return { ...report, closed: true };
       }
       return report;
     });
   }
 
-  public findReferenceByReport(reportReferenceKey: number): ReportModel | undefined {
+  public findReferenceByReport(reportReferenceKey: number) {
     const report = this._reports.find((report) => report.primaryKey === reportReferenceKey);
     if (!report) {
       throw new Error("Invalid Referece");

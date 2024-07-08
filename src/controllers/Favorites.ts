@@ -4,7 +4,7 @@ import { AdController } from "./Ads";
 import { TokenController } from "./Tokens";
 
 export class FavoriteController {
-  private _favorites: Array<FavoriteModel> = [];
+  private _favorites: ReadonlyArray<Readonly<FavoriteModel>>;
   private _tokenIstance: TokenController;
   private _adIstance: AdController;
   constructor() {
@@ -44,7 +44,7 @@ export class FavoriteController {
     return favorite;
   }
 
-  get favorites(): ReadonlyArray<FavoriteModel> {
+  get favorites() {
     return [...this._favorites];
   }
 }

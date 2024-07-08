@@ -3,7 +3,7 @@ import { TokenController } from "./Tokens";
 import { ServiceContainer } from "../services/ServicesContainer";
 
 export class DeviceController {
-  private _devices: Array<DeviceModel> = [];
+  private _devices: ReadonlyArray<Readonly<DeviceModel>>;
   private _tokenIstance: TokenController;
 
   constructor() {
@@ -27,8 +27,7 @@ export class DeviceController {
 
     this._devices = this._devices.map((device) => {
       if (device.deviceReferenceKey === deviceReferenceKey) {
-        device.deviceName = newValue;
-        return device;
+        return { ...device, _deviceName: newValue };
       }
       return device;
     });
@@ -44,7 +43,7 @@ export class DeviceController {
     this._devices = this._devices.filter((device) => device.deviceReferenceKey !== referenceDevice!.deviceReferenceKey);
   }
 
-  public findReferenceByIdDevice(deviceReferenceKey: number): DeviceModel | undefined {
+  public findReferenceByIdDevice(deviceReferenceKey: number) {
     const findDevice = this._devices.find((device) => device.deviceReferenceKey === deviceReferenceKey);
     if (!findDevice) {
       throw new Error("Invalid Device Reference Key");
@@ -52,7 +51,7 @@ export class DeviceController {
     return findDevice;
   }
 
-  get devices(): ReadonlyArray<DeviceModel> {
+  get devices() {
     return [...this._devices];
   }
 }

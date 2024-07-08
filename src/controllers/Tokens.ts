@@ -2,7 +2,7 @@ import { TokenModel } from "../models/Token";
 import { UserModel } from "../models/User";
 
 export class TokenController {
-  private _tokens: Array<TokenModel> = [];
+  private _tokens: ReadonlyArray<Readonly<TokenModel>>;
 
   constructor() {
     this._tokens = [];
@@ -14,16 +14,16 @@ export class TokenController {
     return createToken.userToken;
   }
 
-  public removeToken(tokenToRemove: TokenModel): void {
-    this._tokens = this._tokens.filter((token) => token !== tokenToRemove);
+  public removeToken(tokenToRemove: number): void {
+    this._tokens = this._tokens.filter((token) => token.userToken !== tokenToRemove);
   }
 
-  public findTokenByReference(userReferenceKey: number): TokenModel | undefined {
+  public findTokenByReference(userReferenceKey: number) {
     const findToken = this._tokens.find((token) => token.userPrimaryKey === userReferenceKey);
     return findToken;
   }
 
-  public findReferenceByToken(tokenUser: number): TokenModel | undefined {
+  public findReferenceByToken(tokenUser: number) {
     const findReference = this._tokens.find((token) => token.userToken === tokenUser);
 
     if (!findReference) {
@@ -32,7 +32,7 @@ export class TokenController {
     return findReference;
   }
 
-  get tokens(): ReadonlyArray<TokenModel> {
+  get tokens() {
     return [...this._tokens];
   }
 }

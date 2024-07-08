@@ -9,7 +9,7 @@ export class AdModel {
   private _status: string;
   private _category: string;
   private _phone: number;
-  private _lead: [];
+  private _lead: number[];
   private _urlForImage: string;
   private _userReferenceKeyPurchased: UserModel["_primaryKey"];
 
@@ -95,7 +95,7 @@ export class AdModel {
   set phone(newValue: number) {
     this._phone = newValue;
   }
-  get lead(): [] {
+  get lead(): number[] {
     return this._lead;
   }
 
