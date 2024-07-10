@@ -1,7 +1,7 @@
 import { ReportModel } from "../models/Report";
 import { TokenController } from "./Tokens";
 import { AdController } from "./Ads";
-import { ServiceContainer } from "../services/ServicesContainer";
+import { ServiceContainer } from "../services/servicesContainer";
 
 export class ReportController {
   private _reports: ReadonlyArray<Readonly<ReportModel>> = [];

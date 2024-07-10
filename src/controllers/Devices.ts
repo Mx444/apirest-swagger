@@ -1,6 +1,6 @@
 import { DeviceModel } from "../models/Device";
 import { TokenController } from "./Tokens";
-import { ServiceContainer } from "../services/ServicesContainer";
+import { ServiceContainer } from "../services/servicesContainer";
 
 export class DeviceController {
   private _devices: ReadonlyArray<Readonly<DeviceModel>>;

@@ -1,6 +1,6 @@
 import { AdModel } from "../models/Ad";
 import { TokenController } from "./Tokens";
-import { ServiceContainer } from "../services/ServicesContainer";
+import { ServiceContainer } from "../services/servicesContainer";
 import { UserModel } from "../models/User";
 import { TokenModel } from "../models/Token";
 

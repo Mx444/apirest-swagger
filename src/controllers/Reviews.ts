@@ -1,7 +1,7 @@
 import { ReviewModel } from "../models/Review";
 import { TokenController } from "./Tokens";
 import { AdController } from "./Ads";
-import { ServiceContainer } from "../services/ServicesContainer";
+import { ServiceContainer } from "../services/servicesContainer";
 
 export class ReviewController {
   private _reviews: ReadonlyArray<Readonly<ReviewModel>>;

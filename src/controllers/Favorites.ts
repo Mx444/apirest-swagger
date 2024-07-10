@@ -1,5 +1,5 @@
 import { FavoriteModel } from "../models/Favorite";
-import { ServiceContainer } from "../services/ServicesContainer";
+import { ServiceContainer } from "../services/servicesContainer";
 import { AdController } from "./Ads";
 import { TokenController } from "./Tokens";
 

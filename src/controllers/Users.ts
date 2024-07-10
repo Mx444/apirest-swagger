@@ -1,7 +1,7 @@
 import { UserModel } from "../models/User";
 import { DeviceController } from "./Devices";
 import { TokenController } from "./Tokens";
-import { ServiceContainer } from "../services/ServicesContainer";
+import { ServiceContainer } from "../services/servicesContainer";
 import { TokenModel } from "../models/Token";
 import { DeviceModel } from "../models/Device";
 
