@@ -2,8 +2,8 @@
   "scripts": {
     "compile": "npx tsc --noEmit && tsc",
     "tsnode": "npx ts-node src/",
-    "start": "node dist/server.js",
-    "dev": "npm run compile && npm run start"
+    "server": "node dist/server.js",
+    "start": "npm run compile && npm run server"
   },
   "dependencies": {
     "express": "^4.19.2",
