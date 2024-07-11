@@ -5,49 +5,49 @@ const userServices = ServiceContainer.getUserController();
 const tokenServies = ServiceContainer.getTokenController();
 const routerUser = express.Router();
 
+const handleError = (res: Response, error: any) => {
+  console.error(error);
+  res.status(400).json({ error: error.message || "An error occurred" });
+};
+
 /**
  * @swagger
  * /auth/user:
  *   get:
- *     summary: Get user list
+ *     summary: Get list of users
  *     responses:
  *       200:
- *         description: Successful response
+ *         description: A list of users
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 list:
- *                   type: array
- *                   items:
- *                     type: object
- *                 session:
- *                   type: object
- *                 Token:
- *                   type: array
- *                   items:
- *                     type: string
+ *               type: array
+ *               items:
+ *                 type: object
  */
 routerUser.get("/user", (req: Request, res: Response) => {
-  res.json({ list: userServices.users, session: userServices.session, Token: tokenServies.tokens });
+  try {
+    res.json({
+      list: userServices.users,
+      session: userServices.session,
+      Token: tokenServies.tokens,
+    });
+  } catch (error) {
+    handleError(res, error);
+  }
 });
 
 /**
  * @swagger
  * /auth/signup:
  *   post:
- *     summary: User Signup
+ *     summary: Register a new user
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - email
- *               - username
- *               - password
  *             properties:
  *               email:
  *                 type: string
@@ -58,30 +58,16 @@ routerUser.get("/user", (req: Request, res: Response) => {
  *     responses:
  *       200:
  *         description: User registered successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
  *       400:
- *         description: Signup failed
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
+ *         description: Error occurred
  */
-routerUser.post("/signup", async (req: Request, res: Response) => {
+routerUser.post("/signup", (req: Request, res: Response) => {
   const { email, username, password } = req.body;
   try {
-    await userServices.signup(email, username, password);
+    userServices.signup(email, username, password);
     res.status(200).json({ message: "User registered successfully" });
   } catch (error) {
-    res.status(400).json({ error: "Signup failed" || error });
+    handleError(res, error);
   }
 });
 
@@ -89,16 +75,13 @@ routerUser.post("/signup", async (req: Request, res: Response) => {
  * @swagger
  * /auth/login:
  *   post:
- *     summary: User Login
+ *     summary: Login a user
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - username
- *               - password
  *             properties:
  *               username:
  *                 type: string
@@ -115,16 +98,9 @@ routerUser.post("/signup", async (req: Request, res: Response) => {
  *                 message:
  *                   type: string
  *                 Token:
- *                   type: string
+ *                   type: number
  *       400:
- *         description: Login failed
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
+ *         description: Error occurred
  */
 routerUser.post("/login", async (req: Request, res: Response) => {
   const { username, password } = req.body;
@@ -132,7 +108,7 @@ routerUser.post("/login", async (req: Request, res: Response) => {
     const user = await userServices.login(username, password);
     res.status(200).json({ message: "User logged in successfully", Token: user.userToken });
   } catch (error) {
-    res.status(400).json({ error: "Login failed" || error });
+    handleError(res, error);
   }
 });
 
@@ -140,42 +116,33 @@ routerUser.post("/login", async (req: Request, res: Response) => {
  * @swagger
  * /auth/logout:
  *   delete:
- *     summary: User Logout
+ *     summary: Logout a user
  *     parameters:
  *       - in: header
- *         name: Authorization
+ *         name: authorization
  *         required: true
  *         schema:
- *           type: string
- *           format: integer
+ *           type: integer
+ *         description: User's authorization token
  *     responses:
  *       200:
  *         description: User logged out successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
  *       400:
- *         description: Logout failed
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
+ *         description: Error occurred
  */
-routerUser.delete("/logout", async (req: Request, res: Response) => {
-  const reqToken = req.headers.authorization;
-  const token = Number(reqToken);
+routerUser.delete("/logout", (req: Request, res: Response) => {
+  const token = Number(req.headers.authorization);
+  console.log("Received token:", token);
+
+  if (!token) {
+    return res.status(400).json({ error: "Authorization header missing" });
+  }
+
   try {
-    await userServices.logout(token);
+    userServices.logout(token);
     res.status(200).json({ message: "User logged out successfully" });
   } catch (error) {
-    res.status(400).json({ error: "Login failed" || error });
+    handleError(res, error);
   }
 });
 
@@ -183,23 +150,20 @@ routerUser.delete("/logout", async (req: Request, res: Response) => {
  * @swagger
  * /auth/user:
  *   patch:
- *     summary: Update user information
+ *     summary: Update a user
  *     parameters:
  *       - in: header
- *         name: Authorization
+ *         name: authorization
  *         required: true
  *         schema:
- *           type: string
- *           format: integer
+ *           type: integer
+ *         description: User's authorization token
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - type
- *               - newValue
  *             properties:
  *               type:
  *                 type: string
@@ -208,33 +172,17 @@ routerUser.delete("/logout", async (req: Request, res: Response) => {
  *     responses:
  *       200:
  *         description: User updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
  *       400:
- *         description: Failed to update user
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
+ *         description: Error occurred
  */
-routerUser.patch("/user", async (req: Request, res: Response) => {
-  const reqToken = req.headers.authorization;
-  const token = Number(reqToken);
+routerUser.patch("/user", (req: Request, res: Response) => {
+  const token = Number(req.headers.authorization);
   const { type, newValue } = req.body;
-
   try {
-    await userServices.editUser(token, type, newValue);
+    userServices.editUser(token, type, newValue);
     res.status(200).json({ message: "User updated successfully" });
   } catch (error) {
-    res.status(400).json({ error: "Failed to update user" || error });
+    handleError(res, error);
   }
 });
 
@@ -242,23 +190,20 @@ routerUser.patch("/user", async (req: Request, res: Response) => {
  * @swagger
  * /auth/user:
  *   delete:
- *     summary: Delete user
+ *     summary: Delete a user
  *     parameters:
  *       - in: header
- *         name: Authorization
+ *         name: authorization
  *         required: true
  *         schema:
- *           type: string
- *           format: integer
+ *           type: integer
+ *         description: User's authorization token
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - username
- *               - password
  *             properties:
  *               username:
  *                 type: string
@@ -267,33 +212,17 @@ routerUser.patch("/user", async (req: Request, res: Response) => {
  *     responses:
  *       200:
  *         description: User deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
  *       400:
- *         description: Failed to delete user
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
+ *         description: Error occurred
  */
-routerUser.delete("/user", async (req: Request, res: Response) => {
-  const reqToken = req.headers.authorization;
-  const token = Number(reqToken);
+routerUser.delete("/user", (req: Request, res: Response) => {
+  const token = Number(req.headers.authorization);
   const { username, password } = req.body;
-
   try {
-    await userServices.removeUser(token, username, password);
+    userServices.removeUser(token, username, password);
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
-    res.status(400).json({ error: "Failed to delete user" || error });
+    handleError(res, error);
   }
 });
 

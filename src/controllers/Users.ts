@@ -6,7 +6,7 @@ import { TokenModel } from "../models/Token";
 import { DeviceModel } from "../models/Device";
 
 interface Session {
-  username: UserModel["_username"];
+  username: UserModel["username"];
   userPrimaryKey: UserModel["_primaryKey"];
 }
 
@@ -74,12 +74,16 @@ export class UserController {
     const userReference = this._tokenIstance.findReferenceByToken(token);
 
     this._users = this._users.map((user) => {
-      if (user.primaryKey === userReference!.userPrimaryKey) {
+      if (user.primaryKey === userReference.userPrimaryKey) {
         switch (type) {
           case "email":
             return { ...user, _email: newValue };
           case "username":
-            return { ...user, _username: newValue };
+            this._session = {
+              username: newValue,
+              userPrimaryKey: user.primaryKey,
+            };
+            return { ...user, username: newValue };
           case "password":
             return { ...user, _password: newValue };
           default:
