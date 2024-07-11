@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import routerUser from "./routes/users-router";
 import routerDevice from "./routes/device-router";
 import { ServiceContainer } from "./services/servicesContainer";
+import { setupSwagger } from "./docs/swagger";
 
 const userServices = ServiceContainer.getUserController();
 const port = process.env.EXPRESS_PORT || 3000;
@@ -10,6 +11,7 @@ const app = express();
 const server = express.json();
 
 app.use(server);
+setupSwagger(app);
 
 app.use("/auth", routerUser);
 app.use("/device", routerDevice);
