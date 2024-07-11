@@ -78,13 +78,10 @@ export class UserController {
         switch (type) {
           case "email":
             return { ...user, _email: newValue };
-            break;
           case "username":
             return { ...user, _username: newValue };
-            break;
           case "password":
             return { ...user, _password: newValue };
-            break;
           default:
             console.log("Invalid edit type");
             return user;
