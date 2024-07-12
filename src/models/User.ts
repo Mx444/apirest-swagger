@@ -31,6 +31,10 @@ export class UserModel {
     return this._username;
   }
 
+  public updateUsername(newValue: string) {
+    this.username = newValue;
+  }
+
   set username(newValue: string) {
     this._username = newValue;
   }
