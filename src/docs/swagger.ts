@@ -12,7 +12,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "http://localhost:3000",
+        url: "https://dubitoit-production-bec3.up.railway.app",
       },
     ],
   },

@@ -15,7 +15,7 @@ app.use(server);
 setupSwagger(app);
 
 const corsOptions = {
-  origin: `${railwayUrl}`,
+  origin: `*`,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
