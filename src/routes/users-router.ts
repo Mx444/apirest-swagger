@@ -175,8 +175,14 @@ routerUser.delete("/logout", (req: Request, res: Response) => {
  *             properties:
  *               type:
  *                 type: string
+ *                 enum:
+ *                   - email
+ *                   - username
+ *                   - password
+ *                 description: Type of field to update (email, username, or password)
  *               newValue:
  *                 type: string
+ *                 description: New value for the specified field
  *     responses:
  *       200:
  *         description: User updated successfully

@@ -77,16 +77,18 @@ export class UserController {
       if (user.primaryKey === userReference.userPrimaryKey) {
         switch (type) {
           case "email":
-            return { ...user, _email: newValue };
+            user.updateEmail(newValue);
+            break;
           case "username":
             this._session = {
               username: newValue,
               userPrimaryKey: user.primaryKey,
             };
-            user.updateUsername(newValue); // Test bug private prop
+            user.updateUsername(newValue);
             break;
           case "password":
-            return { ...user, _password: newValue };
+            user.updatePassword(newValue);
+            break;
           default:
             console.log("Invalid edit type");
             return user;

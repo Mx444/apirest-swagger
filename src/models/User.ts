@@ -23,7 +23,7 @@ export class UserModel {
     return this._email;
   }
 
-  set email(newValue: string) {
+  public updateEmail(newValue: string) {
     this._email = newValue;
   }
 
@@ -32,7 +32,7 @@ export class UserModel {
   }
 
   public updateUsername(newValue: string) {
-    this.username = newValue;
+    this._username = newValue;
   }
 
   set username(newValue: string) {
@@ -43,7 +43,7 @@ export class UserModel {
     return this._password;
   }
 
-  set password(newValue: string) {
+  public updatePassword(newValue: string) {
     this._password = newValue;
   }
 }
