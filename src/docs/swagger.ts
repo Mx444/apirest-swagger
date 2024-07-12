@@ -1,6 +1,9 @@
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { Application } from "express";
+import "dotenv/config";
+const port = process.env.EXPRESS_PORT;
+const railwayUrl = process.env.RAILWAY_URL || `http://localhost:${port}`;
 
 const swaggerOptions = {
   swaggerDefinition: {
@@ -12,7 +15,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "https://dubitoit-production-bec3.up.railway.app/",
+        url: `${railwayUrl}`,
       },
     ],
   },

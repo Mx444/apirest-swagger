@@ -4,11 +4,10 @@ import routerDevice from "./routes/device-router";
 import { ServiceContainer } from "./services/servicesContainer";
 import { setupSwagger } from "./docs/swagger";
 import cors from "cors";
+import "dotenv/config";
 
-const userServices = ServiceContainer.getUserController();
-
-const port = process.env.EXPRESS_PORT || 3000;
-const railwayUrl = process.env.RAILWAY_URL || "http://localhost";
+const port = process.env.EXPRESS_PORT;
+const railwayUrl = process.env.RAILWAY_URL || `http://localhost:${port}`;
 const app = express();
 
 app.use(express.json());
@@ -30,4 +29,4 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello World");
 });
 
-app.listen(port, () => console.log(`${railwayUrl}:${port}`));
+app.listen(port, () => console.log(`${railwayUrl}`));
