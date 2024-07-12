@@ -99,7 +99,7 @@ export class AdController {
 
     this._ads = this._ads.filter((ad) => ad.primaryKey !== adReference!.primaryKey);
   }
-
+  //include same name
   public getPhone(token: number, adPrimaryKey: number) {
     const userReference = this._tokenIstance.findReferenceByToken(token);
     const adReference = this.findAdByKey(adPrimaryKey);

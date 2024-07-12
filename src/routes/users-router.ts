@@ -1,20 +1,18 @@
 import express, { Request, Response } from "express";
 import { ServiceContainer } from "../services/servicesContainer";
+import { handleError, validateToken } from "../utils/handleErrors";
 
 const userServices = ServiceContainer.getUserController();
 const tokenServies = ServiceContainer.getTokenController();
 const routerUser = express.Router();
 
-const handleError = (res: Response, error: any) => {
-  console.error(error);
-  res.status(400).json({ error: error.message || "An error occurred" });
-};
-
 /**
  * @swagger
- * /auth/user:
+ * /auth/users:
  *   get:
  *     summary: Get list of users
+ *     tags:
+ *       - Users
  *     responses:
  *       200:
  *         description: A list of users
@@ -25,10 +23,10 @@ const handleError = (res: Response, error: any) => {
  *               items:
  *                 type: object
  */
-routerUser.get("/user", (req: Request, res: Response) => {
+routerUser.get("/users", (req: Request, res: Response) => {
   try {
     res.json({
-      list: userServices.users,
+      users: userServices.users,
       session: userServices.session,
       Token: tokenServies.tokens,
     });
@@ -43,7 +41,7 @@ routerUser.get("/user", (req: Request, res: Response) => {
  *   post:
  *     summary: Register a new user
  *     tags:
- *       - User POST
+ *       - Users
  *     requestBody:
  *       required: true
  *       content:
@@ -79,7 +77,7 @@ routerUser.post("/signup", (req: Request, res: Response) => {
  *   post:
  *     summary: Login a user
  *     tags:
- *       - User POST
+ *       - Users
  *     requestBody:
  *       required: true
  *       content:
@@ -122,7 +120,7 @@ routerUser.post("/login", (req: Request, res: Response) => {
  *   delete:
  *     summary: Logout a user
  *     tags:
- *       - User DELETE
+ *       - Users
  *     parameters:
  *       - in: header
  *         name: Token
@@ -155,11 +153,11 @@ routerUser.delete("/logout", (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /auth/user:
+ * /auth/users:
  *   patch:
  *     summary: Update a user
  *     tags:
- *       - User PATCH
+ *       - Users
  *     parameters:
  *       - in: header
  *         name: Token
@@ -186,7 +184,7 @@ routerUser.delete("/logout", (req: Request, res: Response) => {
  *       400:
  *         description: Error occurred
  */
-routerUser.patch("/user", (req: Request, res: Response) => {
+routerUser.patch("/users", (req: Request, res: Response) => {
   const tokenString = Number(req.headers.token);
   const { type, newValue } = req.body;
 
@@ -203,11 +201,11 @@ routerUser.patch("/user", (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /auth/user:
+ * /auth/users:
  *   delete:
  *     summary: Delete a user
  *     tags:
- *       - User DELETE
+ *       - Users
  *     parameters:
  *       - in: header
  *         name: Token
@@ -234,7 +232,7 @@ routerUser.patch("/user", (req: Request, res: Response) => {
  *       401:
  *         description: Invalid token
  */
-routerUser.delete("/user", (req: Request, res: Response) => {
+routerUser.delete("/users", (req: Request, res: Response) => {
   const tokenString = req.headers.token;
   const { username, password } = req.body;
 
@@ -248,21 +246,5 @@ routerUser.delete("/user", (req: Request, res: Response) => {
     handleError(res, error);
   }
 });
-
-const validateToken = (tokenString: any, res: Response): number | null => {
-  if (!tokenString) {
-    res.status(400).json({ error: "Authorization header missing" });
-    return null;
-  }
-
-  const token = Number(tokenString);
-
-  if (isNaN(token)) {
-    res.status(401).json({ error: "Invalid token format - token should be a number" });
-    return null;
-  }
-
-  return token;
-};
 
 export default routerUser;

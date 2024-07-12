@@ -22,7 +22,7 @@ export class DeviceModel {
     return this._deviceName;
   }
 
-  set deviceName(newValue: string) {
+  public updateDeviceName(newValue: string) {
     this._deviceName = newValue;
   }
 }

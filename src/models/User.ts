@@ -15,10 +15,6 @@ export class UserModel {
     return this._primaryKey;
   }
 
-  set primaryKey(newValue: number) {
-    this._primaryKey = newValue;
-  }
-
   get email(): string {
     return this._email;
   }
@@ -32,10 +28,6 @@ export class UserModel {
   }
 
   public updateUsername(newValue: string) {
-    this._username = newValue;
-  }
-
-  set username(newValue: string) {
     this._username = newValue;
   }
 

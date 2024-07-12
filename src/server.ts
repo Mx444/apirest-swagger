@@ -23,7 +23,7 @@ app.use(cors(corsOptions));
 setupSwagger(app);
 
 app.use("/auth", routerUser);
-app.use("/device", routerDevice);
+app.use("/devices", routerDevice);
 
 app.get("/", (req: Request, res: Response) => {
   res.redirect("/api-docs");

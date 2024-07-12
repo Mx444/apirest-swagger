@@ -27,7 +27,7 @@ export class DeviceController {
 
     this._devices = this._devices.map((device) => {
       if (device.deviceReferenceKey === deviceReferenceKey) {
-        return { ...device, _deviceName: newValue };
+        device.updateDeviceName(newValue);
       }
       return device;
     });
