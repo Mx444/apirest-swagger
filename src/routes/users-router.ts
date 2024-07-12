@@ -116,22 +116,35 @@ routerUser.post("/login", async (req: Request, res: Response) => {
  * @swagger
  * /auth/logout:
  *   delete:
- *     summary: Logout a user
+ *     tags:
+ *       - default
+ *     summary: auth/logout
  *     parameters:
- *       - in: header
- *         name: authorization
+ *       - name: Authorization
+ *         in: header
  *         required: true
  *         schema:
  *           type: integer
- *         description: User's authorization token
+ *         example: 716
  *     responses:
- *       200:
- *         description: User logged out successfully
- *       400:
- *         description: Error occurred
+ *       '200':
+ *         description: Successful response
+ *         content:
+ *           application/json: {}
+ *       '400':
+ *         description: Authorization header missing
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Authorization header missing"
  */
+
 routerUser.delete("/logout", (req: Request, res: Response) => {
-  const token = Number(req.headers.authorization);
+  const token = req.headers.authorization;
   console.log("Received token:", token);
 
   if (!token) {
@@ -139,7 +152,7 @@ routerUser.delete("/logout", (req: Request, res: Response) => {
   }
 
   try {
-    userServices.logout(token);
+    userServices.logout(Number(token));
     res.status(200).json({ message: "User logged out successfully" });
   } catch (error) {
     handleError(res, error);
