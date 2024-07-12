@@ -15,8 +15,6 @@ const handleError = (res: Response, error: any) => {
  * /auth/user:
  *   get:
  *     summary: Get list of users
- *     tags:
- *       - User GET
  *     responses:
  *       200:
  *         description: A list of users

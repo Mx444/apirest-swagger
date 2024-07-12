@@ -29,10 +29,10 @@ const swaggerUiOptions: swaggerUi.SwaggerUiOptions = {
     filter: true,
   },
 };
-//
+
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
 export const setupSwagger = (app: Application) => {
-  app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocs, swaggerUiOptions));
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs, swaggerUiOptions));
   console.log(`Swagger docs available at /api-docs`);
 };

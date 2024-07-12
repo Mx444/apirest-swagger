@@ -25,4 +25,8 @@ setupSwagger(app);
 app.use("/auth", routerUser);
 app.use("/device", routerDevice);
 
+app.get("/", (req: Request, res: Response) => {
+  res.redirect("/api-docs");
+});
+
 app.listen(port, () => console.log(`${railwayUrl}`));
