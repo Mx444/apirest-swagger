@@ -83,7 +83,8 @@ export class UserController {
               username: newValue,
               userPrimaryKey: user.primaryKey,
             };
-            user.updateUsername(newValue);
+            user.updateUsername(newValue); // Test bug private prop
+            break;
           case "password":
             return { ...user, _password: newValue };
           default:
