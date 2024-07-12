@@ -15,6 +15,8 @@ const handleError = (res: Response, error: any) => {
  * /auth/user:
  *   get:
  *     summary: Get list of users
+ *     tags:
+ *       - User GET
  *     responses:
  *       200:
  *         description: A list of users
@@ -42,6 +44,8 @@ routerUser.get("/user", (req: Request, res: Response) => {
  * /auth/signup:
  *   post:
  *     summary: Register a new user
+ *     tags:
+ *       - User POST
  *     requestBody:
  *       required: true
  *       content:
@@ -76,6 +80,8 @@ routerUser.post("/signup", (req: Request, res: Response) => {
  * /auth/login:
  *   post:
  *     summary: Login a user
+ *     tags:
+ *       - User POST
  *     requestBody:
  *       required: true
  *       content:
@@ -102,10 +108,10 @@ routerUser.post("/signup", (req: Request, res: Response) => {
  *       400:
  *         description: Error occurred
  */
-routerUser.post("/login", async (req: Request, res: Response) => {
+routerUser.post("/login", (req: Request, res: Response) => {
   const { username, password } = req.body;
   try {
-    const user = await userServices.login(username, password);
+    const user = userServices.login(username, password);
     res.status(200).json({ message: "User logged in successfully", Token: user.userToken });
   } catch (error) {
     handleError(res, error);
@@ -117,6 +123,8 @@ routerUser.post("/login", async (req: Request, res: Response) => {
  * /auth/logout:
  *   delete:
  *     summary: Logout a user
+ *     tags:
+ *       - User DELETE
  *     parameters:
  *       - in: header
  *         name: Token
@@ -136,15 +144,8 @@ routerUser.delete("/logout", (req: Request, res: Response) => {
   const tokenString = req.headers.token;
   console.log("Received token:", tokenString);
 
-  if (!tokenString) {
-    return res.status(400).json({ error: "Authorization header missing" });
-  }
-
-  const token = Number(tokenString);
-
-  if (isNaN(token)) {
-    return res.status(400).json({ error: "Invalid token format - token should be a number" });
-  }
+  const token = validateToken(tokenString, res);
+  if (token === null) return;
 
   try {
     userServices.logout(token);
@@ -159,6 +160,8 @@ routerUser.delete("/logout", (req: Request, res: Response) => {
  * /auth/user:
  *   patch:
  *     summary: Update a user
+ *     tags:
+ *       - User PATCH
  *     parameters:
  *       - in: header
  *         name: Token
@@ -175,10 +178,6 @@ routerUser.delete("/logout", (req: Request, res: Response) => {
  *             properties:
  *               type:
  *                 type: string
- *                 enum:
- *                   - email
- *                   - username
- *                   - password
  *                 description: Type of field to update (email, username, or password)
  *               newValue:
  *                 type: string
@@ -190,8 +189,12 @@ routerUser.delete("/logout", (req: Request, res: Response) => {
  *         description: Error occurred
  */
 routerUser.patch("/user", (req: Request, res: Response) => {
-  const token = Number(req.headers.token);
+  const tokenString = Number(req.headers.token);
   const { type, newValue } = req.body;
+
+  const token = validateToken(tokenString, res);
+  if (token === null) return;
+
   try {
     userServices.editUser(token, type, newValue);
     res.status(200).json({ message: "User updated successfully" });
@@ -205,6 +208,8 @@ routerUser.patch("/user", (req: Request, res: Response) => {
  * /auth/user:
  *   delete:
  *     summary: Delete a user
+ *     tags:
+ *       - User DELETE
  *     parameters:
  *       - in: header
  *         name: Token
@@ -228,10 +233,16 @@ routerUser.patch("/user", (req: Request, res: Response) => {
  *         description: User deleted successfully
  *       400:
  *         description: Error occurred
+ *       401:
+ *         description: Invalid token
  */
 routerUser.delete("/user", (req: Request, res: Response) => {
-  const token = Number(req.headers.token);
+  const tokenString = req.headers.token;
   const { username, password } = req.body;
+
+  const token = validateToken(tokenString, res);
+  if (token === null) return;
+
   try {
     userServices.removeUser(token, username, password);
     res.status(200).json({ message: "User deleted successfully" });
@@ -239,5 +250,21 @@ routerUser.delete("/user", (req: Request, res: Response) => {
     handleError(res, error);
   }
 });
+
+const validateToken = (tokenString: any, res: Response): number | null => {
+  if (!tokenString) {
+    res.status(400).json({ error: "Authorization header missing" });
+    return null;
+  }
+
+  const token = Number(tokenString);
+
+  if (isNaN(token)) {
+    res.status(401).json({ error: "Invalid token format - token should be a number" });
+    return null;
+  }
+
+  return token;
+};
 
 export default routerUser;
