@@ -12,16 +12,24 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "https://dubitoit-production-bec3.up.railway.app",
+        url: "http://localhost:3000",
       },
     ],
   },
   apis: ["./src/routes/*.ts"],
 };
 
+const swaggerUiOptions: swaggerUi.SwaggerUiOptions = {
+  swaggerOptions: {
+    tryItOutEnabled: true,
+    displayRequestDuration: true,
+    filter: true,
+  },
+};
+
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
 export const setupSwagger = (app: Application) => {
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs, swaggerUiOptions));
   console.log(`Swagger docs available at /api-docs`);
 };

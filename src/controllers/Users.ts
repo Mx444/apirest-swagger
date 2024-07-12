@@ -83,7 +83,7 @@ export class UserController {
               username: newValue,
               userPrimaryKey: user.primaryKey,
             };
-            return { ...user, username: newValue };
+            return { ...user, _username: newValue };
           case "password":
             return { ...user, _password: newValue };
           default:

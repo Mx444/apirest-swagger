@@ -116,43 +116,38 @@ routerUser.post("/login", async (req: Request, res: Response) => {
  * @swagger
  * /auth/logout:
  *   delete:
- *     tags:
- *       - default
- *     summary: auth/logout
+ *     summary: Logout a user
  *     parameters:
- *       - name: Authorization
- *         in: header
- *         required: true
+ *       - in: header
+ *         name: Token
  *         schema:
- *           type: integer
- *         example: 716
+ *           type: number
+ *         required: true
+ *         description: User's authorization token
  *     responses:
- *       '200':
- *         description: Successful response
- *         content:
- *           application/json: {}
- *       '400':
- *         description: Authorization header missing
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Authorization header missing"
+ *       200:
+ *         description: User logged out successfully
+ *       400:
+ *         description: Error occurred
+ *       401:
+ *         description: Invalid token
  */
-
 routerUser.delete("/logout", (req: Request, res: Response) => {
-  const token = req.headers.authorization;
-  console.log("Received token:", token);
+  const tokenString = req.headers.token;
+  console.log("Received token:", tokenString);
 
-  if (!token) {
+  if (!tokenString) {
     return res.status(400).json({ error: "Authorization header missing" });
   }
 
+  const token = Number(tokenString);
+
+  if (isNaN(token)) {
+    return res.status(400).json({ error: "Invalid token format - token should be a number" });
+  }
+
   try {
-    userServices.logout(Number(token));
+    userServices.logout(token);
     res.status(200).json({ message: "User logged out successfully" });
   } catch (error) {
     handleError(res, error);
@@ -166,7 +161,7 @@ routerUser.delete("/logout", (req: Request, res: Response) => {
  *     summary: Update a user
  *     parameters:
  *       - in: header
- *         name: authorization
+ *         name: Token
  *         required: true
  *         schema:
  *           type: integer
@@ -189,7 +184,7 @@ routerUser.delete("/logout", (req: Request, res: Response) => {
  *         description: Error occurred
  */
 routerUser.patch("/user", (req: Request, res: Response) => {
-  const token = Number(req.headers.authorization);
+  const token = Number(req.headers.token);
   const { type, newValue } = req.body;
   try {
     userServices.editUser(token, type, newValue);
@@ -206,7 +201,7 @@ routerUser.patch("/user", (req: Request, res: Response) => {
  *     summary: Delete a user
  *     parameters:
  *       - in: header
- *         name: authorization
+ *         name: Token
  *         required: true
  *         schema:
  *           type: integer
@@ -229,7 +224,7 @@ routerUser.patch("/user", (req: Request, res: Response) => {
  *         description: Error occurred
  */
 routerUser.delete("/user", (req: Request, res: Response) => {
-  const token = Number(req.headers.authorization);
+  const token = Number(req.headers.token);
   const { username, password } = req.body;
   try {
     userServices.removeUser(token, username, password);

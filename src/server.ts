@@ -6,13 +6,12 @@ import { setupSwagger } from "./docs/swagger";
 import cors from "cors";
 
 const userServices = ServiceContainer.getUserController();
+
 const port = process.env.EXPRESS_PORT || 3000;
 const railwayUrl = process.env.RAILWAY_URL || "http://localhost";
 const app = express();
-const server = express.json();
 
-app.use(server);
-setupSwagger(app);
+app.use(express.json());
 
 const corsOptions = {
   origin: `*`,
@@ -21,6 +20,8 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
+setupSwagger(app);
 
 app.use("/auth", routerUser);
 app.use("/device", routerDevice);
