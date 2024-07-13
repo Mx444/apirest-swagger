@@ -113,6 +113,7 @@ export class UserController {
     this._users = this._users.filter((user) => user.primaryKey !== userReference?.userPrimaryKey);
     this._session = null;
     this._tokenIstance.removeToken(userReference.userToken);
+    this._deviceIstance.removeAllDevices(userReference.userToken);
   }
 
   get users() {

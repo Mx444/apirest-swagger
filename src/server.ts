@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import routerUser from "./routes/users-router";
-import routerDevice from "./routes/device-router";
+import routerDevice from "./routes/devices-router";
+import routerAds from "./routes/ads-router";
 import { ServiceContainer } from "./services/servicesContainer";
 import { setupSwagger } from "./docs/swagger";
 import cors from "cors";
@@ -24,6 +25,7 @@ setupSwagger(app);
 
 app.use("/auth", routerUser);
 app.use("/devices", routerDevice);
+app.use("/ads", routerAds);
 
 app.get("/", (req: Request, res: Response) => {
   res.redirect("/api-docs");

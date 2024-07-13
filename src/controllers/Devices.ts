@@ -43,6 +43,11 @@ export class DeviceController {
     this._devices = this._devices.filter((device) => device.deviceReferenceKey !== referenceDevice!.deviceReferenceKey);
   }
 
+  public removeAllDevices(token: number): void {
+    const referenceUser = this._tokenIstance.findReferenceByToken(token);
+    this._devices = this._devices.filter((device) => device.userReferenceKey !== referenceUser.userPrimaryKey);
+  }
+
   public findReferenceByIdDevice(deviceReferenceKey: number) {
     const findDevice = this._devices.find((device) => device.deviceReferenceKey === deviceReferenceKey);
     if (!findDevice) {

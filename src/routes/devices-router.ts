@@ -44,7 +44,7 @@ routerDevice.get("", (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /devices:
+ * /devices/{deviceReferenceKey}:
  *   patch:
  *     summary: Edit a device name
  *     tags:
@@ -56,6 +56,12 @@ routerDevice.get("", (req: Request, res: Response) => {
  *         schema:
  *           type: string
  *           example: token
+ *       - in: path
+ *         name: deviceReferenceKey
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: deviceKey
  *     requestBody:
  *       required: true
  *       content:
@@ -63,9 +69,6 @@ routerDevice.get("", (req: Request, res: Response) => {
  *           schema:
  *             type: object
  *             properties:
- *               deviceReferenceKey:
- *                 type: string
- *                 example: deviceKey
  *               newValue:
  *                 type: string
  *                 example: new_device_name
@@ -81,12 +84,15 @@ routerDevice.get("", (req: Request, res: Response) => {
  *                   type: string
  *                   example: Device updated
  */
-routerDevice.patch("", (req: Request, res: Response) => {
+routerDevice.patch("/:deviceReferenceKey", (req: Request, res: Response) => {
   const tokenString = req.headers.token;
-  const { deviceReferenceKey, newValue } = req.body;
+  const deviceReferenceKey = Number(req.params.deviceReferenceKey);
+  const { newValue } = req.body;
 
   const token = validateToken(tokenString, res);
   if (token === null) return;
+
+  if (!deviceReferenceKey) return res.status(400).json({ message: "deviceReferenceKey is required" });
 
   try {
     deviceServices.editDeviceName(token, deviceReferenceKey, newValue);
@@ -98,7 +104,7 @@ routerDevice.patch("", (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /devices:
+ * /devices/{deviceReferenceKey}:
  *   delete:
  *     summary: Delete a device
  *     tags:
@@ -110,16 +116,12 @@ routerDevice.patch("", (req: Request, res: Response) => {
  *         schema:
  *           type: string
  *           example: token
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               deviceReferenceKey:
- *                 type: string
- *                 example: device1
+ *       - in: path
+ *         name: deviceReferenceKey
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: 800
  *     responses:
  *       200:
  *         description: Device deleted
@@ -131,19 +133,6 @@ routerDevice.patch("", (req: Request, res: Response) => {
  *                 message:
  *                   type: string
  *                   example: Device deleted
- *                 list:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                       name:
- *                         type: string
- *                       type:
- *                         type: string
- *                       status:
- *                         type: string
  *       400:
  *         description: Bad request
  *       401:
@@ -151,16 +140,18 @@ routerDevice.patch("", (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error
  */
-routerDevice.delete("", (req: Request, res: Response) => {
+routerDevice.delete("/:deviceReferenceKey", (req: Request, res: Response) => {
   const tokenString = req.headers.token;
-  const { deviceReferenceKey } = req.body;
+  const deviceReferenceKey = Number(req.params.deviceReferenceKey);
 
   const token = validateToken(tokenString, res);
   if (token === null) return;
 
+  if (!deviceReferenceKey) return res.status(400).json({ message: "deviceReferenceKey is required" });
+
   try {
     deviceServices.removeDevice(token, deviceReferenceKey);
-    res.status(200).json({ message: "device deleted", list: deviceServices.devices });
+    res.status(200).json({ message: "Device deleted" });
   } catch (error) {
     handleError(res, error);
   }

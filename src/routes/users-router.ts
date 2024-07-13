@@ -153,7 +153,7 @@ routerUser.delete("/logout", (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /auth/users:
+ * /auth/users/{primaryKeyUser}:
  *   patch:
  *     summary: Update a user
  *     tags:
@@ -184,7 +184,7 @@ routerUser.delete("/logout", (req: Request, res: Response) => {
  *       400:
  *         description: Error occurred
  */
-routerUser.patch("/users", (req: Request, res: Response) => {
+routerUser.patch("/users/:primaryKeyUser", (req: Request, res: Response) => {
   const tokenString = Number(req.headers.token);
   const { type, newValue } = req.body;
 
@@ -201,18 +201,24 @@ routerUser.patch("/users", (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /auth/users:
+ * /auth/users/{username}:
  *   delete:
  *     summary: Delete a user
  *     tags:
  *       - Users
  *     parameters:
  *       - in: header
- *         name: Token
+ *         name: token
  *         required: true
  *         schema:
- *           type: integer
- *         description: User's authorization token
+ *           type: string
+ *           example: token
+ *       - in: path
+ *         name: username
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: string
  *     requestBody:
  *       required: true
  *       content:
@@ -220,21 +226,31 @@ routerUser.patch("/users", (req: Request, res: Response) => {
  *           schema:
  *             type: object
  *             properties:
- *               username:
- *                 type: string
  *               password:
  *                 type: string
+ *                 example: string
  *     responses:
  *       200:
  *         description: User deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User deleted successfully
  *       400:
- *         description: Error occurred
+ *         description: Bad request
  *       401:
- *         description: Invalid token
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
  */
-routerUser.delete("/users", (req: Request, res: Response) => {
+routerUser.delete("/users/:username", (req: Request, res: Response) => {
   const tokenString = req.headers.token;
-  const { username, password } = req.body;
+  const { username } = req.params;
+  const password = req.body.password;
 
   const token = validateToken(tokenString, res);
   if (token === null) return;
