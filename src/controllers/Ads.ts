@@ -48,7 +48,7 @@ export class AdController {
     if (isUserOwner && !adReference!.userReferenceKeyPurchased) {
       this._ads = this._ads.map((ad) => {
         if (ad.primaryKey === adPrimaryKey) {
-          return { ...ad, _userReferenceKeyPurchased: userReferenceKeyPurchased };
+          ad.updateUserReferenceKeyPurchased(userReferenceKeyPurchased);
         }
         return ad;
       });
@@ -67,19 +67,26 @@ export class AdController {
       if (ad.primaryKey === adReference!.primaryKey) {
         switch (type) {
           case "title":
-            return { ...ad, _title: newValue };
+            ad.updateTitle(newValue);
+            break;
           case "description":
-            return { ...ad, _desciption: newValue };
+            ad.updateDesciption(newValue);
+            break;
           case "price":
-            return { ...ad, _price: newValue };
+            ad.updatePrice(newValue);
+            break;
           case "status":
-            return { ...ad, _status: newValue };
+            ad.updateStatus(newValue);
+            break;
           case "category":
-            return { ...ad, _category: newValue };
+            ad.updateCategory(newValue);
+            break;
           case "phone":
-            return { ...ad, _phone: newValue };
+            ad.updatePhone(newValue);
+            break;
           case "url":
-            return { ...ad, _urlForImage: newValue };
+            ad.updateUrlForImage(newValue);
+            break;
           default:
             console.log("Invalid edit type");
             return ad;

@@ -47,11 +47,14 @@ export class ReviewController {
       if (review.primaryKey === reviewReference!.primaryKey) {
         switch (type) {
           case "title":
-            return { ...review, _title: newValue };
+            review.updateTitle(newValue);
+            break;
           case "description":
-            return { ...review, _description: newValue };
+            review.updateDescription(newValue);
+            break;
           case "rating":
-            return { ...review, _rating: newValue };
+            review.updateRating(newValue);
+            break;
           default:
             console.log("Invalid edit type");
             return review;

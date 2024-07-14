@@ -45,7 +45,7 @@ export class AdModel {
     return this._title;
   }
 
-  set title(newValue: string) {
+  public updateTitle(newValue: string) {
     this._title = newValue;
   }
 
@@ -53,7 +53,7 @@ export class AdModel {
     return this._description;
   }
 
-  set desciption(newValue: string) {
+  public updateDesciption(newValue: string) {
     this._description = newValue;
   }
 
@@ -65,14 +65,14 @@ export class AdModel {
     return this._price;
   }
 
-  set price(newValue: number) {
+  public updatePrice(newValue: number) {
     this._price = newValue;
   }
   get status(): string {
     return this._status;
   }
 
-  set status(newValue: string) {
+  public updateStatus(newValue: string) {
     this._status = newValue;
   }
 
@@ -80,7 +80,7 @@ export class AdModel {
     return this._category;
   }
 
-  set category(newValue: string) {
+  public updateCategory(newValue: string) {
     this._category = newValue;
   }
 
@@ -92,7 +92,7 @@ export class AdModel {
     return this._phone;
   }
 
-  set phone(newValue: number) {
+  public updatePhone(newValue: number) {
     this._phone = newValue;
   }
   get lead(): number[] {
@@ -103,14 +103,14 @@ export class AdModel {
     return this._urlForImage;
   }
 
-  set urlForImage(newValue: string) {
+  public updateUrlForImage(newValue: string) {
     this._urlForImage = newValue;
   }
 
   get userReferenceKeyPurchased(): number {
     return this._userReferenceKeyPurchased;
   }
-  set userReferenceKeyPurchased(newValue: number) {
+  public updateUserReferenceKeyPurchased(newValue: number) {
     this._userReferenceKeyPurchased = newValue;
   }
 }

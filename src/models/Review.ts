@@ -29,7 +29,7 @@ export class ReviewModel {
     return this._primaryKey;
   }
 
-  set primaryKey(newValue: number) {
+  public updatePrimaryKey(newValue: number) {
     this._primaryKey = newValue;
   }
 
@@ -37,7 +37,7 @@ export class ReviewModel {
     return this._userReferenceKey;
   }
 
-  set userReferenceKey(newValue: UserModel["_primaryKey"]) {
+  public updateUserReferenceKey(newValue: UserModel["_primaryKey"]) {
     this._userReferenceKey = newValue;
   }
 
@@ -45,7 +45,7 @@ export class ReviewModel {
     return this._adReferenceKey;
   }
 
-  set adReferenceKey(newValue: AdModel["_primaryKey"]) {
+  public updateAdReferenceKey(newValue: AdModel["_primaryKey"]) {
     this._adReferenceKey = newValue;
   }
 
@@ -53,7 +53,7 @@ export class ReviewModel {
     return this._title;
   }
 
-  set title(newValue: string) {
+  public updateTitle(newValue: string) {
     this._title = newValue;
   }
 
@@ -61,7 +61,7 @@ export class ReviewModel {
     return this._description;
   }
 
-  set description(newValue: string) {
+  public updateDescription(newValue: string) {
     this._description = newValue;
   }
 
@@ -69,7 +69,7 @@ export class ReviewModel {
     return this._date;
   }
 
-  set date(newValue: Date) {
+  public updateDate(newValue: Date) {
     this._date = newValue;
   }
 
@@ -77,7 +77,7 @@ export class ReviewModel {
     return this._rating;
   }
 
-  set rating(newValue: number) {
+  public updateRating(newValue: number) {
     this._rating = newValue;
   }
 }

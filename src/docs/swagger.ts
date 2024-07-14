@@ -15,6 +15,9 @@ const swaggerOptions = {
     },
     servers: [
       {
+        url: `http://localhost:${port}`,
+      },
+      {
         url: `${railwayUrl}`,
       },
     ],
